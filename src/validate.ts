@@ -17,13 +17,13 @@ export function validateOutput(expected: OutputValidation|undefined, output: str
   }
   if (shouldBeExactly) {
     if (output !== shouldBeExactly) {
-      throw new Error(`Expected: ${shouldBeExactly}\nReceived: ${output}`);
+      return `Expected: ${shouldBeExactly}\nReceived: ${output}`;
     }
   }
   if (shouldContain) {
     for (const item of shouldContain) {
       if (!output.includes(item)) {
-        throw new Error(`Output did not contain '${item}'`);
+        return `Output did not contain '${item}'`;
       }
     }
   }
@@ -33,7 +33,7 @@ export function validateOutput(expected: OutputValidation|undefined, output: str
     }
     for (const interpolated of interpolateStrings(shouldContainInterpolated, parameters)) {
       if (!output.includes(interpolated)) {
-        throw new Error(`Output did not contain '${interpolated}'`);
+        return `Output did not contain '${interpolated}'`;
       }
     }
   }

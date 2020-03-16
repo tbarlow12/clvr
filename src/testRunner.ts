@@ -1,7 +1,7 @@
+import { CommandValidation, runCommandChain } from "./commandRunner";
 import { DirectoryParameters } from "./parameters";
 import { ResultSet } from "./results";
-import { CommandValidation, runCommandChain } from "./commandRunner";
-import { getDirectories, getDirName } from "./utils";
+import { getDirName } from "./utils";
 
 export function runTest(
       validations: CommandValidation[],
@@ -9,7 +9,7 @@ export function runTest(
       parameters: DirectoryParameters = {}): Promise<ResultSet> {
     let testsCompleted = 0;
     
-    const results: ResultSet = {};
+    const results = InitializeResultSet(directories, validations);
 
     return new Promise<ResultSet>((resolve, reject) => {
       directories.forEach(directory => {
@@ -29,8 +29,46 @@ export function runTest(
     });
 }
 
+export function InitializeResultSet(directories: string[], validations: CommandValidation[]): ResultSet {
+  const results: ResultSet = {};
+  for (const d of directories) {
+    const dirName = getDirName(d);
+    for (const v of validations) {
+      if (!(dirName in results)) {
+        results[dirName] = {}
+      }
+      results[dirName][v.command] = {
+        passed: false,
+        run: false
+      }
+    }
+  }
+
+  return results;
+}
+
 export function logResults(test: (directories: string[]) => Promise<ResultSet>, directories: string[]) {
   test(directories)
-    .then((results) => console.log(JSON.stringify(results, null, 2)))
+    .then((results) => {
+      const passed = getResults(results, true);
+      const failed = getResults(results, false)
+    })
     .catch((reason) => console.log(reason));
+}
+
+export function getResults(results: ResultSet, passed: boolean) {
+  const filtered = [];
+  for (const directoryName of Object.keys(results)) {
+    for (const testName of Object.keys(results[directoryName])) {
+      const testResult = results[directoryName][testName];
+      if (testResult.passed === passed) {
+        const result = (passed) ? "PASSED" : "FAILED";
+        let summary = `${result} - ${directoryName} - ${testName}`;
+        if (testResult.message) {
+          summary += ` - ${testResult.message}`
+        }
+        filtered.push(summary);
+      }
+    }
+  }
 }

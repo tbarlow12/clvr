@@ -3,8 +3,11 @@ export interface ResultSet {
 }
 
 export interface DirectoryResultSet {
-  [ testName: string ]: {
-    passed: boolean;
-    message?: string;
-  }
+  [ testName: string ]: TestResult
+}
+
+export interface TestResult {
+  passed: boolean;
+  run: boolean;
+  message?: string;
 }
