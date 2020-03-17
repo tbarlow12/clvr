@@ -52,7 +52,7 @@ export function runCommandChain(
       console.log(`${dirName} '${command}' finished`);
     },
     (stdout, stderr) => {
-      const message = `stdout:\n${stdout}\nstderr:\n${stderr}`
+      const message = `stdout: ${stdout}stderr: ${stderr}`
       results[command] = {
         run: true,
         passed: false,

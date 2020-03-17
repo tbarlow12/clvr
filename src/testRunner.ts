@@ -50,18 +50,28 @@ export function InitializeResultSet(directories: string[], validations: CommandV
 export function logResults(test: (directories: string[]) => Promise<ResultSet>, directories: string[]) {
   test(directories)
     .then((results) => {
-      const passed = getResults(results, true);
-      const failed = getResults(results, false)
+      const passed = getResults(results, true, true);
+      const failed = getResults(results, true, false);
+      const skipped = getResults(results, false, false);
+      if (passed.length > 0) {
+        console.log(`Passed:\n${passed.join("\n")}`);
+      }
+      if (failed.length > 0) {
+        console.log(`Failed:\n${failed.join("\n")}`);
+      }
+      if (skipped.length > 0) {
+        console.log(`Failed:\n${skipped.join("\n")}`);
+      }
     })
     .catch((reason) => console.log(reason));
 }
 
-export function getResults(results: ResultSet, passed: boolean) {
+export function getResults(results: ResultSet, run: boolean, passed: boolean) {
   const filtered = [];
   for (const directoryName of Object.keys(results)) {
     for (const testName of Object.keys(results[directoryName])) {
       const testResult = results[directoryName][testName];
-      if (testResult.passed === passed) {
+      if (testResult.passed === passed && testResult.run === run) {
         const result = (passed) ? "PASSED" : "FAILED";
         let summary = `${result} - ${directoryName} - ${testName}`;
         if (testResult.message) {
@@ -71,4 +81,5 @@ export function getResults(results: ResultSet, passed: boolean) {
       }
     }
   }
+  return filtered;
 }
