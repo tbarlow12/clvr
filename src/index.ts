@@ -1,9 +1,5 @@
 export {
   Clover
-} from "./runner"
-
-export {
-  CloverSummarizer
-} from "./summarizer"
+} from "./clover"
 
 export * from "./models"

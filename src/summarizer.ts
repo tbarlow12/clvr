@@ -3,7 +3,7 @@ import { ResultSet, TestSummary } from "./models";
 /**
  * Helper class for summarizing test results
  */
-export class CloverSummarizer {
+export class Summarizer {
 
   public static printBriefSummary(test: (directories: string[]) => Promise<ResultSet>, directories: string[]) {
     test(directories)
@@ -13,9 +13,11 @@ export class CloverSummarizer {
           failed,
           skipped
         } = this.getBriefSummary(results);
-        passed.forEach((s) => console.log(s));
-        skipped.forEach((s) => console.log(s));
-        failed.forEach((s) => console.log(s));
+        console.log(passed.join("\n"));
+        console.log(skipped.join("\n"));
+        if (failed.length > 0) {
+          throw new Error(failed.join("\n"));
+        }
       });
   }
   
