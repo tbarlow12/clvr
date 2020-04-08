@@ -41,6 +41,12 @@ export class Clover {
     });
   }
 
+  public static runSuite(tests: {(directories: string[]): Promise<ResultSet>}[], directories: string[]) {
+    tests.forEach((test) => {
+      this.summarize(test, directories);
+    })
+  }
+
   public static summarize(test: (directories: string[]) => Promise<ResultSet>, directories: string[]) {
     Summarizer.printBriefSummary(test, directories);
   }
