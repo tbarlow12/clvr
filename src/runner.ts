@@ -49,29 +49,20 @@ export class Clover {
     if (!expected) {
       return;
     }
-    const { shouldBeExactly, shouldContain, shouldContainInterpolated } = expected;
+    const { shouldBeExactly, shouldContain } = expected;
     if (shouldBeExactly && shouldContain) {
       throw new Error("Can't specify both `shouldBeExactly` and `shouldContain`");
     }
     if (shouldBeExactly) {
-      if (output !== shouldBeExactly) {
-        return `Expected: ${shouldBeExactly}\nReceived: ${output}`;
+      const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
+      if (output !== interpolated) {
+        return `Expected: ${interpolated}\nReceived: ${output}`;
       }
     }
     if (shouldContain) {
-      for (const item of shouldContain) {
+      for (const item of Utils.interpolateStrings(shouldContain, parameters)) {
         if (!output.includes(item)) {
           return `Output did not contain '${item}'`;
-        }
-      }
-    }
-    if (shouldContainInterpolated) {
-      if (!parameters) {
-        throw new Error("Cannot interpolate strings without parameters");
-      }
-      for (const interpolated of Utils.interpolateStrings(shouldContainInterpolated, parameters)) {
-        if (!output.includes(interpolated)) {
-          return `Output did not contain '${interpolated}'`;
         }
       }
     }
@@ -88,7 +79,7 @@ export class Clover {
       return;
     }
     const validation = validations[0];
-    const command = validation.command;
+    const command = Utils.interpolateString(validation.command, parameters);
     const split = command.split(" ");
     const commandName = split[0];
     const args = split.slice(1, split.length);

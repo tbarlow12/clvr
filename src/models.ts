@@ -48,16 +48,16 @@ export interface TestSummary {
  * Expected conditions for an output stream (stdout or stderr)
  */
 export interface OutputValidation {
-  /** The output should be *exactly* this string */
-  shouldBeExactly?: string;
-  /** The output should contain ALL of these strings */
-  shouldContain?: string[];
   /** 
-   * The output should contain ALL of these strings,
-   * substituting any ${variables} for the values as passed
-   * in by the parameters. 
+   * The output should be *exactly* this string.
+   * Allows for interpolation of ${variables}
    */
-  shouldContainInterpolated?: string[];
+  shouldBeExactly?: string;
+  /** 
+   * The output should contain ALL of these strings.
+   * Allows for interpolation of ${variables}
+   */
+  shouldContain?: string[];
 }
 
 /** Expected conditions for state of files in directory after command is run */

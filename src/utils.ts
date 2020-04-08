@@ -4,6 +4,8 @@ import { InterpolateParameters } from "./models";
 import { spawn } from "child_process";
 
 export class Utils {
+
+  private static variableRegex = /\${([a-zA-Z]+)}/g
   
   public static getDirectories(source = ".") {
     return readdirSync(source, { withFileTypes: true })
@@ -17,19 +19,24 @@ export class Utils {
       ? directory.substring(lastSlashIndex + 1)
       : directory;
   }
+
+  public static containsVariable(original: string): boolean {
+    return !!original.match(Utils.variableRegex);
+  }
   
-  public static interpolateStrings(original: string[], parameters: InterpolateParameters): string[] {
-    const variableRegex = /\${([a-zA-Z]+)}/g
-    return original.map((s) => {
-      const variables = s.match(variableRegex);
-      if (variables) {
-        for (const m of variables) {
-          const key = m.replace("$", "").replace("{", "").replace("}", "");
-          s = s.replace(m, parameters[key]);
-        }
+  public static interpolateStrings(originals: string[], parameters: InterpolateParameters): string[] {
+    return originals.map((s) => Utils.interpolateString(s, parameters));
+  }
+
+  public static interpolateString(original: string, parameters: InterpolateParameters): string {
+    const variables = original.match(Utils.variableRegex);
+    if (variables) {
+      for (const m of variables) {
+        const key = m.replace("$", "").replace("{", "").replace("}", "");
+        original = original.replace(m, parameters[key]);
       }
-      return s;
-    });
+    }
+    return original;
   }
 
   public static createSpawn(
