@@ -23,10 +23,6 @@ export class Utils {
   public static containsVariable(original: string): boolean {
     return !!original.match(Utils.variableRegex);
   }
-  
-  public static interpolateStrings(originals: string[], parameters: InterpolateParameters): string[] {
-    return originals.map((s) => Utils.interpolateString(s, parameters));
-  }
 
   public static interpolateString(original: string, parameters: InterpolateParameters): string {
     const variables = original.match(Utils.variableRegex);

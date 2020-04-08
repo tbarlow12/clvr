@@ -4,9 +4,12 @@ import {
   DirectoryResultSet,
   InterpolateParameters,
   ResultSet,
-  OutputValidation
+  OutputValidation,
+  FileValidation
 } from "./models";
 import { Utils } from "./utils";
+import { join, sep } from "path"
+import fs from "fs";
 
 /**
  * Client class for Clover library
@@ -45,11 +48,14 @@ export class Clover {
     });
   }
 
-  private static validateOutput(expected: OutputValidation|undefined, output: string, parameters: InterpolateParameters) {
-    if (!expected) {
+  private static validateOutput(
+      outputValidation: OutputValidation|undefined,
+      output: string,
+      parameters: InterpolateParameters) {
+    if (!outputValidation) {
       return;
     }
-    const { shouldBeExactly, shouldContain } = expected;
+    const { shouldBeExactly, shouldContain } = outputValidation;
     if (shouldBeExactly && shouldContain) {
       throw new Error("Can't specify both `shouldBeExactly` and `shouldContain`");
     }
@@ -60,9 +66,43 @@ export class Clover {
       }
     }
     if (shouldContain) {
-      for (const item of Utils.interpolateStrings(shouldContain, parameters)) {
-        if (!output.includes(item)) {
+      for (const item of shouldContain) {
+        const interpolated = Utils.interpolateString(item, parameters);
+        if (!output.includes(interpolated)) {
           return `Output did not contain '${item}'`;
+        }
+      }
+    }
+  }
+
+  private static validateFiles(fileValidation: FileValidation | undefined, directory: string, parameters: InterpolateParameters) {
+    if (!fileValidation){
+      return;
+    }
+    for (const key of Object.keys(fileValidation)) {
+      const { shouldExist, shouldContain } = fileValidation[key];
+      
+      if (!shouldExist && !shouldContain) {
+        continue;
+      }
+
+      const filename = Utils.interpolateString(key, parameters);
+
+      var path = join(process.cwd(), directory, filename);
+      if (shouldExist !== undefined) {
+        const exists = fs.existsSync(path);
+        if (exists !== shouldExist) {
+          return `Expected ${path} exists to be ${shouldExist}, but got ${exists}`
+        }
+      }
+
+      if (shouldContain) {
+        const content = fs.readFileSync(path);
+        for (const item of shouldContain) {
+          const interpolated = Utils.interpolateString(item, parameters);
+          if (!content.includes(interpolated)) {
+            return `File ${filename} did not contain '${interpolated}'`;
+          }
         }
       }
     }
@@ -92,11 +132,12 @@ export class Clover {
       (stdout, stderr) => {
         const stdoutValidationError = this.validateOutput(validation.stdout, stdout, parameters);
         const stderrValidationError = this.validateOutput(validation.stderr, stderr, parameters);
-        if (stdoutValidationError || stderrValidationError) {
+        const fileValidationError = this.validateFiles(validation.files, directory, parameters);
+        if (stdoutValidationError || stderrValidationError || fileValidationError) {
           results[command] = {
             run: true,
             passed: false,
-            failureMessage: `stdout: ${stdoutValidationError}\nstderr: ${stderrValidationError}`,
+            failureMessage: `stdout: ${stdoutValidationError}\nstderr: ${stderrValidationError}\nfiles: ${fileValidationError}`,
             stdout,
             stderr,
           }
