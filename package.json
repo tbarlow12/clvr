@@ -1,6 +1,6 @@
 {
   "name": "clvr",
-  "version": "0.0.1-1",
+  "version": "0.0.1",
   "description": "🍀 Clover: The Command-Line Validator",
   "main": "./lib/index.js",
   "bin": {
@@ -17,7 +17,9 @@
   ],
   "author": "Tanner Barlow",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "chalk": "^4.0.0"
+  },
   "devDependencies": {
     "@types/node": "^13.9.1",
     "ts-node": "^8.6.2",

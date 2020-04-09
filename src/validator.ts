@@ -105,8 +105,6 @@ export class Validator {
           }
         }
       }
-
-      console.log("finished validating files");
     }
   }
 }

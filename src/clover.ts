@@ -1,21 +1,29 @@
 import { Initializer } from "./initializer";
-import { CommandValidation, DirectoryParameters, ResultSet } from "./models";
+import { CommandValidation, DirectoryParameters, ResultSet, CloverTest } from "./models";
 import { runCommandChain } from "./runner";
 import { Utils } from "./utils";
-import { Summarizer } from "./summarizer";
+import { Summarizers } from "./summarizers";
 
 /**
  * Client class for Clover library
  */
 export class Clover {
 
-  /**
+  public static run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.brief) {
+    tests.forEach((test) => {
+      const { validations, directories, parameters } = test;
+      this.execute(validations, directories, parameters)
+        .then(summarizer);
+    })
+  }
+
+    /**
    * Run a command-line validation
    * @param validations Commands to validate
    * @param directories Directories in which to run commands
    * @param parameters Substitute values for variables in expected conditions
    */
-  public static run(
+  private static execute(
       validations: CommandValidation[],
       directories: string[],
       parameters: DirectoryParameters = {}): Promise<ResultSet> {
@@ -39,15 +47,5 @@ export class Clover {
         }        
       });
     });
-  }
-
-  public static runSuite(tests: {(directories: string[]): Promise<ResultSet>}[], directories: string[]) {
-    tests.forEach((test) => {
-      this.summarize(test, directories);
-    })
-  }
-
-  public static summarize(test: (directories: string[]) => Promise<ResultSet>, directories: string[]) {
-    Summarizer.printBriefSummary(test, directories);
   }
 }

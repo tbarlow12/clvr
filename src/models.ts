@@ -1,3 +1,9 @@
+export interface CloverTest {
+  validations: CommandValidation[];
+  directories: string[];
+  parameters: DirectoryParameters;
+}
+
 /**
  * Results of tests, organized first by directory name
  * and then by test command

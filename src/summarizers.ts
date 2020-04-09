@@ -1,24 +1,31 @@
 import { ResultSet, TestSummary } from "./models";
+import { Logger } from "./logger";
 
-/**
- * Helper class for summarizing test results
- */
-export class Summarizer {
+export class Summarizers {
+  public static brief(results: ResultSet) {
+    this.printSummary(this.getBriefSummary(results));
+  }
 
-  public static printBriefSummary(test: (directories: string[]) => Promise<ResultSet>, directories: string[]) {
-    test(directories)
-      .then((results) => {
-        const {
-          passed,
-          failed,
-          skipped
-        } = this.getBriefSummary(results);
-        console.log(passed.join("\n"));
-        console.log(skipped.join("\n"));
-        if (failed.length > 0) {
-          throw new Error(failed.join("\n"));
-        }
-      });
+  public static verbose(results: ResultSet) {
+
+  }
+
+  public static markdownTable(results: ResultSet) {
+
+  }
+
+  private static printSummary(summary: TestSummary) {
+    const {
+      passed,
+      failed,
+      skipped
+    } = summary;
+    Logger.green(passed.join("\n"));
+    Logger.warn(skipped.join("\n"));
+    Logger.error(failed.join("\n"));
+    if (failed.length > 0) {
+      process.exit(1);
+    }
   }
   
   /**
@@ -33,7 +40,7 @@ export class Summarizer {
     };
   }
 
-  private static getResultSummary(results: ResultSet, run: boolean, passed: boolean) {
+  private static getResultSummary(results: ResultSet, run: boolean, passed: boolean): string[] {
     const filtered = [];
     for (const directoryName of Object.keys(results)) {
       for (const testName of Object.keys(results[directoryName])) {

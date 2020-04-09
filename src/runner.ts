@@ -2,6 +2,7 @@ import { Utils } from "./utils";
 import { DirectoryResultSet, CommandValidation, InterpolateParameters } from "./models";
 import { Validator } from "./validator";
 import { onExecutionError } from "./onError";
+import { Logger } from "./logger";
 
 export function runCommandChain(
   directory: string,
@@ -29,7 +30,7 @@ export function runCommandChain(
       Validator.validate(validation, directory, stdout, stderr, parameters, results);
       // Recursive call for the rest of the chain
       runCommandChain(directory, validations.slice(1, validations.length), results, onFinish, parameters);
-      console.log(`${dirName} '${command}' finished`);
+      Logger.log(`${dirName} '${command}' finished`);
     },
     (stdout, stderr) => onExecutionError(stdout, stderr, command, directory, results)
   );
