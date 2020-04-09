@@ -3,7 +3,7 @@ import { Logger } from "./logger";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
-    this.printSummary(this.getBriefSummary(results));
+    // Summarizers.printSummary(Summarizers.getBriefSummary(results));
   }
 
   public static verbose(results: ResultSet) {
@@ -34,9 +34,9 @@ export class Summarizers {
    */
   private static getBriefSummary(results: ResultSet): TestSummary {
     return {
-      passed: this.getResultSummary(results, true, true),
-      failed: this.getResultSummary(results, true, false),
-      skipped: this.getResultSummary(results, false, false),
+      passed: Summarizers.getResultSummary(results, true, true),
+      failed: Summarizers.getResultSummary(results, true, false),
+      skipped: Summarizers.getResultSummary(results, false, false),
     };
   }
 

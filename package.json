@@ -3,11 +3,9 @@
   "version": "0.0.1",
   "description": "🍀 Clover: The Command-Line Validator",
   "main": "./lib/index.js",
-  "bin": {
-    "clvr": "./lib/index.js"
-  },
   "scripts": {
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "test": "jest"
   },
   "keywords": [
     "command-line",
@@ -28,6 +26,7 @@
     "jest": "^25.3.0",
     "jest-cli": "^25.3.0",
     "mock-fs": "^4.11.0",
+    "ts-jest": "^25.3.1",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
   },

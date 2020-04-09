@@ -9,12 +9,14 @@ import { Summarizers } from "./summarizers";
  */
 export class Clover {
 
-  public static run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.brief) {
-    tests.forEach((test) => {
+  public static async run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.brief): Promise<CloverTest[]> {
+    for (const test of tests) {
       const { validations, directories, parameters } = test;
-      this.execute(validations, directories, parameters)
-        .then(summarizer);
-    })
+      var results = await this.execute(validations, directories || ["."], parameters);
+      summarizer(results);
+      test.results = results;
+    }
+    return tests;
   }
 
     /**

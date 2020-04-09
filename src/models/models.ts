@@ -1,7 +1,8 @@
 export interface CloverTest {
   validations: CommandValidation[];
-  directories: string[];
-  parameters: DirectoryParameters;
+  directories?: string[];
+  parameters?: DirectoryParameters;
+  results?: ResultSet;
 }
 
 /**
@@ -64,6 +65,10 @@ export interface OutputValidation {
    * Allows for interpolation of ${variables}
    */
   shouldContain?: string[];
+  /**
+   * Specifies whether or not the output should be empty
+   */
+  isEmpty?: boolean;
 }
 
 /** Expected conditions for state of files in directory after command is run */
