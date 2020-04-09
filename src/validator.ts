@@ -6,12 +6,12 @@ import { Utils } from "./utils";
 export class Validator {
 
   public static validate(
-      validation: CommandValidation,
-      directory: string,
-      stdout: string,
-      stderr: string,
-      parameters: InterpolateParameters,
-      results: DirectoryResultSet) {
+    validation: CommandValidation,
+    directory: string,
+    stdout: string,
+    stderr: string,
+    parameters: InterpolateParameters,
+    results: DirectoryResultSet) {
     
     const stdoutValidationError = this.validateOutput(validation.stdout, stdout, parameters);
     const stderrValidationError = this.validateOutput(validation.stderr, stderr, parameters);
@@ -97,9 +97,9 @@ export class Validator {
   }
 
   private static validateFiles(
-      fileValidation: FileValidation | undefined,
-      directory: string,
-      parameters: InterpolateParameters): string | undefined {
+    fileValidation: FileValidation | undefined,
+    directory: string,
+    parameters: InterpolateParameters): string | undefined {
     if (!fileValidation){
       return;
     }
@@ -113,7 +113,7 @@ export class Validator {
 
       const filename = Utils.interpolateString(key, parameters);
 
-      var path = join(process.cwd(), directory, filename);
+      const path = join(process.cwd(), directory, filename);
       if (shouldExist !== undefined) {
         const exists = fs.existsSync(path);
         if (exists !== shouldExist) {

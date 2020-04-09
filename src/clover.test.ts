@@ -2,9 +2,8 @@ import { Clover } from "./clover";
 import { CloverTest, ResultSet, DirectoryResultSet, TestResult } from "./models";
 
 describe("Clover", () => {
-
   it("runs a single test", async () => {
-    var tests: CloverTest[] = [
+    const tests: CloverTest[] = [
       {
         validations: [
           {
@@ -46,7 +45,7 @@ describe("Clover", () => {
   });
 
   it("runs multiple chained commands", async () => {
-    var tests: CloverTest[] = [
+    const tests: CloverTest[] = [
       {
         validations: [
           {
@@ -81,7 +80,7 @@ describe("Clover", () => {
   });
 
   it("throws an error if command fails", async () => {
-    var tests: CloverTest[] = [
+    const tests: CloverTest[] = [
       {
         validations: [
           {
@@ -94,7 +93,7 @@ describe("Clover", () => {
   });
 
   it("does not run empty directory set", async () => {
-    var tests: CloverTest[] = [
+    const tests: CloverTest[] = [
       {
         validations: [
           {

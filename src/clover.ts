@@ -5,7 +5,6 @@ import { Utils } from "./utils";
 import { Summarizers } from "./summarizers";
 
 jest.mock("./logger");
-import { Logger } from "./logger";
 
 /**
  * Client class for Clover library
@@ -31,16 +30,16 @@ export class Clover {
     return tests;
   }
 
-    /**
+  /**
    * Run a command-line validation
    * @param validations Commands to validate
    * @param directories Directories in which to run commands
    * @param parameters Substitute values for variables in expected conditions
    */
   private static execute(
-      validations: CommandValidation[],
-      directories: string[],
-      parameters: DirectoryParameters = {}): Promise<ResultSet> {
+    validations: CommandValidation[],
+    directories: string[],
+    parameters: DirectoryParameters = {}): Promise<ResultSet> {
     return new Promise((resolve, reject) => {
       let testsCompleted = 0;
       const results = Initializer.resultSet(directories, validations);
