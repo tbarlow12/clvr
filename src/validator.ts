@@ -51,21 +51,46 @@ export class Validator {
     if (!outputValidation) {
       return;
     }
-    const { shouldBeExactly, shouldContain } = outputValidation;
+    
+    const {
+      shouldBeExactly,
+      shouldContain,
+      shouldNotContain,
+      isEmpty,
+    } = outputValidation;
+
     if (shouldBeExactly && shouldContain) {
       throw new Error("Can't specify both `shouldBeExactly` and `shouldContain`");
     }
+
+    if (isEmpty !== undefined) {
+      const outputIsEmpty = output === "";
+      if (isEmpty !== outputIsEmpty) {
+        return `Expected isEmpty to be ${isEmpty} but got ${outputIsEmpty}`
+      }
+    }
+
     if (shouldBeExactly) {
       const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
       if (output !== interpolated) {
         return `Expected: ${interpolated}\nReceived: ${output}`;
       }
     }
+
     if (shouldContain) {
       for (const item of shouldContain) {
         const interpolated = Utils.interpolateString(item, parameters);
         if (!output.includes(interpolated)) {
-          return `Output did not contain '${item}'`;
+          return `Output was supposed to contain '${item}'`;
+        }
+      }
+    }
+
+    if (shouldNotContain) {
+      for (const item of shouldNotContain) {
+        const interpolated = Utils.interpolateString(item, parameters);
+        if (output.includes(interpolated)) {
+          return `Output was not supposed to contain '${item}'`;
         }
       }
     }

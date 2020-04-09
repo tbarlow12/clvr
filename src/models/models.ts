@@ -66,6 +66,11 @@ export interface OutputValidation {
    */
   shouldContain?: string[];
   /**
+   * The output should contain NONE of these strings.
+   * Allows for interpolation of ${variables}
+   */
+  shouldNotContain?: string[]
+  /**
    * Specifies whether or not the output should be empty
    */
   isEmpty?: boolean;

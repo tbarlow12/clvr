@@ -22,5 +22,6 @@ module.exports = {
     "ts",
     "json",
     "node"
-  ]
+  ],
+  "setupFilesAfterEnv": [ "./jest.setup.js" ]
 };

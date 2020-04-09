@@ -5,7 +5,8 @@
   "main": "./lib/index.js",
   "scripts": {
     "build": "tsc -p .",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "npm run test -- --coverage"
   },
   "keywords": [
     "command-line",

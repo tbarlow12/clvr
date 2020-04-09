@@ -1,5 +1,5 @@
 import { Clover } from "./clover";
-import { CloverTest, ResultSet } from "./models";
+import { CloverTest, ResultSet, DirectoryResultSet } from "./models";
 
 describe("Clover", () => {
 
@@ -36,4 +36,71 @@ describe("Clover", () => {
       expect(testResult.failureMessage).toBeUndefined();
     });
   });
+
+  it("commands actually perform the actions", async () => {
+
+  });
+
+  it("runs multiple independent commands", async () => {
+
+  });
+
+  it("runs multiple chained commands", async () => {
+    var tests: CloverTest[] = [
+      {
+        validations: [
+          {
+            command: "touch output.txt",
+            files: {
+              "output.txt": {
+                shouldExist: true,
+              }
+            }
+          },
+          {
+            command: "ls",
+            stdout: {
+              shouldContain: [
+                "output.txt"
+              ]
+            }
+          },
+          {
+            command: "rm -rf output.txt",
+            files: {
+              "output.txt": {
+                shouldExist: false,
+              }
+            }
+          }
+        ]
+      }
+    ]
+    await Clover.run(tests);
+    allTestsPassed(tests);
+  });
+
+  it("runs test with the default summarizer", async () => {
+
+  });
+
+  it("runs test with a custom summarizer", async () => {
+
+  });
+
+  function allTestsPassed(tests: CloverTest[]) {
+    tests.forEach((test) => {
+      const results = test.results as ResultSet;
+      expect(results).toBeDefined();
+      for (const dir of Object.keys(results)) {
+        const dirResults = results[dir];
+        for (const command of Object.keys(dirResults)) {
+          const { passed, run, failureMessage } = dirResults[command];
+          expect(run).toBe(true);
+          expect(passed).toBe(true);
+          expect(failureMessage).toBeUndefined();
+        }
+      }
+    });
+  }
 })
