@@ -1,5 +1,5 @@
 import { Clover } from "./clover";
-import { CloverTest, ResultSet, DirectoryResultSet } from "./models";
+import { CloverTest, ResultSet, DirectoryResultSet, TestResult } from "./models";
 
 describe("Clover", () => {
 
@@ -91,7 +91,25 @@ describe("Clover", () => {
       }
     ]
     await expect(Clover.run(tests)).rejects.toThrow();
-  })
+  });
+
+  it("does not run empty directory set", async () => {
+    var tests: CloverTest[] = [
+      {
+        validations: [
+          {
+            command: "echo hello",
+            stdout: {
+              shouldBeExactly: "hello\n",
+            }
+          }
+        ],
+        directories: []
+      }
+    ]
+    await expect(Clover.run(tests)).rejects.toThrow();
+    noTestsRun(tests);
+  });
 
   it("runs test with the default summarizer", async () => {
 
@@ -101,19 +119,32 @@ describe("Clover", () => {
 
   });
 
-  function allTestsPassed(tests: CloverTest[]) {
+  function allTestsAssertion(tests: CloverTest[], assertion: (result: TestResult) => void) {
     tests.forEach((test) => {
       const results = test.results as ResultSet;
       expect(results).toBeDefined();
       for (const dir of Object.keys(results)) {
         const dirResults = results[dir];
         for (const command of Object.keys(dirResults)) {
-          const { passed, run, failureMessage } = dirResults[command];
-          expect(run).toBe(true);
-          expect(passed).toBe(true);
-          expect(failureMessage).toBeUndefined();
+          assertion(dirResults[command]);
         }
       }
+    });
+  }
+
+  function noTestsRun(tests: CloverTest[]) {
+    tests.forEach((test) => {
+      const results = test.results as ResultSet;
+      expect(results).toBeUndefined();
+    });
+  }
+
+  function allTestsPassed(tests: CloverTest[]) {
+    allTestsAssertion(tests, (testResult) => {
+      const { run, passed, failureMessage } = testResult;
+      expect(run).toBe(true);
+      expect(passed).toBe(true);
+      expect(failureMessage).toBeUndefined();
     });
   }
 })
