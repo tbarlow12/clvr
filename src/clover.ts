@@ -3,6 +3,7 @@ import { CommandValidation, DirectoryParameters, ResultSet, CloverTest } from ".
 import { runCommandChain } from "./runner";
 import { Utils } from "./utils";
 import { Summarizers } from "./summarizers";
+import { Logger } from "./logger";
 
 /**
  * Client class for Clover library
@@ -12,9 +13,13 @@ export class Clover {
   public static async run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.brief): Promise<CloverTest[]> {
     for (const test of tests) {
       const { validations, directories, parameters } = test;
-      var results = await this.execute(validations, directories || ["."], parameters);
-      summarizer(results);
-      test.results = results;
+      try {
+        const results = await this.execute(validations, directories || ["."], parameters);
+        // summarizer(results);
+        test.results = results;
+      } catch (err) {
+        throw new Error(err);
+      }      
     }
     return tests;
   }
@@ -33,21 +38,21 @@ export class Clover {
     
     const results = Initializer.resultSet(directories, validations);
 
-    return new Promise<ResultSet>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       directories.forEach(directory => {
         const dirName = Utils.getDirName(directory);
-        try {
-          runCommandChain(directory, validations, {}, (testResults) => {
+        runCommandChain(directory, validations, {}, parameters[dirName],
+          (testResults) => {
             results[dirName] = testResults;
             testsCompleted += 1;
             if (testsCompleted === directories.length) {
               resolve(results);
             }
-          }, parameters[dirName]);
-        } catch(err) {
-          reject(err);
-        }        
+          })
+          .catch((reason) => {
+            reject(reason)
+          });
       });
-    });
+    });    
   }
 }

@@ -80,6 +80,19 @@ describe("Clover", () => {
     allTestsPassed(tests);
   });
 
+  it("throws an error if command fails", async () => {
+    var tests: CloverTest[] = [
+      {
+        validations: [
+          {
+            command: "cat fakeFile.txt",
+          }
+        ]
+      }
+    ]
+    await expect(Clover.run(tests)).rejects.toThrow();
+  })
+
   it("runs test with the default summarizer", async () => {
 
   });
