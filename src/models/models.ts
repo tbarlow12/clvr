@@ -120,4 +120,6 @@ export interface CommandValidation {
   stderr?: OutputValidation;
   /** Object that describes expected state of files in directory after test is run */
   files?: FileValidation;
+  /** Custom predicate for command result */
+  custom?: {(parameters?: InterpolateParameters, stdout?: string, stderr?: string): string | undefined}
 }
