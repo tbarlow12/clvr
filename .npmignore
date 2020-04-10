@@ -1,8 +1,0 @@
-src/**/*/test.(ts|js)
-.vscode/
-.eslintrc.json
-jest.*
-coverage/
-src/
-*.tgz
-tsconfig*.json

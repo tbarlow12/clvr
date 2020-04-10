@@ -3,6 +3,9 @@
   "version": "0.0.5",
   "description": "🍀 Clover: The Command-Line Validator",
   "main": "./lib/index.js",
+  "files": [
+    "lib/"
+  ],
   "scripts": {
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
