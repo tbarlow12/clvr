@@ -1,5 +1,7 @@
 import { Clover } from "./clover";
-import { CloverTest, ResultSet, DirectoryResultSet, TestResult } from "./models";
+import { CloverTest, ResultSet, TestResult } from "./models";
+
+jest.mock("./logger");
 
 describe("Clover", () => {
   it("runs a single test", async () => {
