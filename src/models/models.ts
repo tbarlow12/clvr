@@ -1,4 +1,5 @@
 export interface CloverTest {
+  name?: string;
   validations: CommandValidation[];
   directories?: string[];
   parameters?: DirectoryParameters;
