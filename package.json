@@ -1,6 +1,6 @@
 {
   "name": "clvr",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "🍀 Clover: The Command-Line Validator",
   "main": "./lib/index.js",
   "files": [
