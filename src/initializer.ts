@@ -1,7 +1,6 @@
 import { ResultSet, CommandValidation } from "./models";
 import { Utils } from "./utils";
 
-
 export class Initializer {
   public static resultSet(directories: string[], validations: CommandValidation[]): ResultSet {
     const results: ResultSet = {};

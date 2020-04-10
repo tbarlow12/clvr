@@ -4,8 +4,6 @@ import { runCommandChain } from "./runner";
 import { Utils } from "./utils";
 import { Summarizers } from "./summarizers";
 
-jest.mock("./logger");
-
 /**
  * Client class for Clover library
  */
