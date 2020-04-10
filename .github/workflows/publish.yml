@@ -24,12 +24,12 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: true
-    - name: Version bump
-      uses: phips28/gh-action-bump-version@v7.0.4
-      with:
-        tag-prefix: ''
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Version bump
+    #   uses: phips28/gh-action-bump-version@v7.0.4
+    #   with:
+    #     tag-prefix: ''
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Release
       uses: mikeal/merge-release@v4.0.7
       env:
