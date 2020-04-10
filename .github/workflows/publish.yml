@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - master
-name: Build and Publish
+name: Build, Test and Publish
 jobs:
   all:
     name: Build, Test and Publish
@@ -24,7 +24,13 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
         fail_ci_if_error: true # optional (default = false)
-    - name: npm release
+    - name: Version bump
+      uses: phips28/gh-action-bump-version@v7.0.4
+      with:
+        tag-prefix: ''
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
       uses: mikeal/merge-release@v4.0.7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
