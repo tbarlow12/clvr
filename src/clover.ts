@@ -48,15 +48,18 @@ export class Clover {
       }
       directories.forEach(directory => {
         const dirName = Utils.getDirName(directory);
+        // TODO start timer here
         runCommandChain(directory, validations, {}, parameters[dirName],
           (testResults) => {
             results[dirName] = testResults;
             testsCompleted += 1;
             if (testsCompleted === directories.length) {
+              // TODO finish timer here
               resolve(results);
             }
           })
           .catch((reason) => {
+            // TODO finish timer here
             reject(reason)
           });
       });

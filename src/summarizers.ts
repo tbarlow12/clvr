@@ -3,7 +3,7 @@ import { Logger } from "./logger";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
-    // Summarizers.printSummary(Summarizers.getBriefSummary(results));
+    Summarizers.printSummary(Summarizers.getBriefSummary(results));
   }
 
   public static verbose(results: ResultSet) {
