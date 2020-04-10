@@ -1,7 +1,8 @@
 export interface CloverTest {
   validations: CommandValidation[];
-  directories: string[];
-  parameters: DirectoryParameters;
+  directories?: string[];
+  parameters?: DirectoryParameters;
+  results?: ResultSet;
 }
 
 /**
@@ -10,7 +11,7 @@ export interface CloverTest {
  */
 export interface ResultSet {
   /** Dictionary of dictionaries of test results */
-  [dir: string]: DirectoryResultSet
+  [dir: string]: DirectoryResultSet;
 }
 
 /**
@@ -18,7 +19,7 @@ export interface ResultSet {
  */
 export interface DirectoryResultSet {
   /** Dictionary of TestResults. Key is full string of command */
-  [ command: string ]: TestResult
+  [ command: string ]: TestResult;
 }
 
 /**
@@ -64,6 +65,15 @@ export interface OutputValidation {
    * Allows for interpolation of ${variables}
    */
   shouldContain?: string[];
+  /**
+   * The output should contain NONE of these strings.
+   * Allows for interpolation of ${variables}
+   */
+  shouldNotContain?: string[];
+  /**
+   * Specifies whether or not the output should be empty
+   */
+  isEmpty?: boolean;
 }
 
 /** Expected conditions for state of files in directory after command is run */
@@ -76,7 +86,7 @@ export interface FileValidation {
     shouldContain?: string[];
     /** The file content should be *exactly* this string */
     shouldBeExactly?: string;
-  }
+  };
 }
 
 /**
@@ -93,7 +103,7 @@ export interface InterpolateParameters {
  */
 export interface DirectoryParameters {
   /** Dictionary of parameter dictionaries. Key is directory name */
-  [dir: string]: InterpolateParameters
+  [dir: string]: InterpolateParameters;
 }
 
 /**

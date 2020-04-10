@@ -6,12 +6,12 @@ import { Utils } from "./utils";
 export class Validator {
 
   public static validate(
-      validation: CommandValidation,
-      directory: string,
-      stdout: string,
-      stderr: string,
-      parameters: InterpolateParameters,
-      results: DirectoryResultSet) {
+    validation: CommandValidation,
+    directory: string,
+    stdout: string,
+    stderr: string,
+    parameters: InterpolateParameters,
+    results: DirectoryResultSet) {
     
     const stdoutValidationError = this.validateOutput(validation.stdout, stdout, parameters);
     const stderrValidationError = this.validateOutput(validation.stderr, stderr, parameters);
@@ -51,30 +51,55 @@ export class Validator {
     if (!outputValidation) {
       return;
     }
-    const { shouldBeExactly, shouldContain } = outputValidation;
+    
+    const {
+      shouldBeExactly,
+      shouldContain,
+      shouldNotContain,
+      isEmpty,
+    } = outputValidation;
+
     if (shouldBeExactly && shouldContain) {
       throw new Error("Can't specify both `shouldBeExactly` and `shouldContain`");
     }
+
+    if (isEmpty !== undefined) {
+      const outputIsEmpty = output === "";
+      if (isEmpty !== outputIsEmpty) {
+        return `Expected isEmpty to be ${isEmpty} but got ${outputIsEmpty}`
+      }
+    }
+
     if (shouldBeExactly) {
       const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
       if (output !== interpolated) {
         return `Expected: ${interpolated}\nReceived: ${output}`;
       }
     }
+
     if (shouldContain) {
       for (const item of shouldContain) {
         const interpolated = Utils.interpolateString(item, parameters);
         if (!output.includes(interpolated)) {
-          return `Output did not contain '${item}'`;
+          return `Output was supposed to contain '${item}'`;
+        }
+      }
+    }
+
+    if (shouldNotContain) {
+      for (const item of shouldNotContain) {
+        const interpolated = Utils.interpolateString(item, parameters);
+        if (output.includes(interpolated)) {
+          return `Output was not supposed to contain '${item}'`;
         }
       }
     }
   }
 
   private static validateFiles(
-      fileValidation: FileValidation | undefined,
-      directory: string,
-      parameters: InterpolateParameters): string | undefined {
+    fileValidation: FileValidation | undefined,
+    directory: string,
+    parameters: InterpolateParameters): string | undefined {
     if (!fileValidation){
       return;
     }
@@ -88,7 +113,7 @@ export class Validator {
 
       const filename = Utils.interpolateString(key, parameters);
 
-      var path = join(process.cwd(), directory, filename);
+      const path = join(process.cwd(), directory, filename);
       if (shouldExist !== undefined) {
         const exists = fs.existsSync(path);
         if (exists !== shouldExist) {
