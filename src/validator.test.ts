@@ -1,5 +1,5 @@
 import { Validator } from "./validator"
-import { CommandValidation, ResultSet, DirectoryResultSet } from "./models";
+import { CommandValidation, ResultSet, DirectoryResultSet, InterpolateParameters } from "./models";
 
 describe("Validator", () => {
   const command = "stub command";
@@ -375,11 +375,37 @@ describe("Validator", () => {
 
   describe("custom", () => {
     it("expect to pass", () => {
-
+      const validation: CommandValidation = {
+        command,
+        custom: (parameters, stdout, stderr) => {
+          stdout === `hello ${parameters["param1"]}`
+          stderr === `hello ${parameters["param2"]}`
+        }
+      }
+      const results = initial();
+      const parameters: InterpolateParameters = {
+        param1: "bruce",
+        param2: "clark",
+      }
+      Validator.validate(validation, "", "hello bruce", "hello clark", parameters, results);
+      expectPass(results);
     });
 
     it("expect to fail", () => {
-
+      const validation: CommandValidation = {
+        command,
+        custom: (parameters, stdout, stderr) => {
+          stdout === `hello ${parameters["param1"]}`
+          stderr === `hello ${parameters["param2"]}`
+        }
+      }
+      const results = initial();
+      const parameters: InterpolateParameters = {
+        param1: "bruce",
+        param2: "clark",
+      }
+      Validator.validate(validation, "", "hello clark", "hello bruce", parameters, results);
+      expectFail(results);
     });
   });
 

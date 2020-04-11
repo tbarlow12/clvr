@@ -135,10 +135,10 @@ export class Validator {
   }
 
   private static validateCustom (
-    custom?: {(parameters?: InterpolateParameters, stdout?: string, stderr?: string): string | undefined},
-    stdout?: string,
-    stderr?: string,
-    parameters?: InterpolateParameters) {
+    custom: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | void},
+    stdout: string,
+    stderr: string,
+    parameters: InterpolateParameters) {
     if (!custom) {
       return;
     }
