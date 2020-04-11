@@ -12,25 +12,19 @@ export class Validator {
     stderr: string,
     parameters: InterpolateParameters,
     results: DirectoryResultSet) {
+
+    const errorMessages = [
+      this.validateOutput(validation.stdout, stdout, parameters),
+      this.validateOutput(validation.stderr, stderr, parameters),
+      this.validateFiles(validation.files, directory, parameters),
+      this.validateCustom(validation.custom, stdout, stderr, parameters),
+    ].filter((value) => value !== undefined);
     
-    const stdoutValidationError = this.validateOutput(validation.stdout, stdout, parameters);
-    const stderrValidationError = this.validateOutput(validation.stderr, stderr, parameters);
-    const fileValidationError = this.validateFiles(validation.files, directory, parameters);
-    if (stdoutValidationError || stderrValidationError || fileValidationError) {
-      let failureMessage = "";
-      if (stdoutValidationError) {
-        failureMessage += `${stdoutValidationError}\n`
-      }
-      if (stderrValidationError) {
-        failureMessage += `${stderrValidationError}\n`
-      }
-      if (fileValidationError) {
-        failureMessage += `${fileValidationError}\n`
-      }
+    if (errorMessages.length > 0) {
       results[validation.command] = {
         run: true,
         passed: false,
-        failureMessage,
+        failureMessage: errorMessages.join("\n"),
         stdout,
         stderr,
       }
@@ -105,9 +99,9 @@ export class Validator {
     }
 
     for (const key of Object.keys(fileValidation)) {
-      const { shouldExist, shouldContain } = fileValidation[key];
+      const { shouldExist, shouldContain, shouldBeExactly } = fileValidation[key];
       
-      if (shouldExist === false && !shouldContain) {
+      if (shouldExist === undefined && !shouldContain && !shouldBeExactly) {
         continue;
       }
 
@@ -122,7 +116,7 @@ export class Validator {
       }
 
       if (shouldContain) {
-        const content = fs.readFileSync(path);
+        const content = fs.readFileSync(path).toString();
         for (const item of shouldContain) {
           const interpolated = Utils.interpolateString(item, parameters);
           if (!content.includes(interpolated)) {
@@ -130,6 +124,25 @@ export class Validator {
           }
         }
       }
+
+      if (shouldBeExactly) {
+        const content = fs.readFileSync(path).toString();
+        if (content !== shouldBeExactly) {
+          return `File content for ${path} was not exactly '${shouldBeExactly}'`
+        }
+      }
     }
   }
+
+  private static validateCustom (
+    custom?: {(parameters?: InterpolateParameters, stdout?: string, stderr?: string): string | undefined},
+    stdout?: string,
+    stderr?: string,
+    parameters?: InterpolateParameters) {
+    if (!custom) {
+      return;
+    }
+    return custom(parameters, stdout, stderr);
+  }
+
 }
