@@ -1,7 +1,8 @@
 import { readdirSync } from "fs";
 import { sep } from "path";
 import { InterpolateParameters } from "./models";
-import { spawn } from "child_process";
+import { spawn } from "cross-spawn";
+import { normalize } from "path"
 
 export class Utils {
 
@@ -14,6 +15,7 @@ export class Utils {
   }
   
   public static getDirName(directory: string) {
+    directory = normalize(directory);
     const lastSlashIndex = directory.lastIndexOf(sep);
     return (lastSlashIndex < directory.length - 1) 
       ? directory.substring(lastSlashIndex + 1)
@@ -60,7 +62,6 @@ export class Utils {
   
     childProcess.on("error", (err) => {
       stderr += `Failed to start subprocess:\n${err.message} ${err.stack}`;
-      
     });
   
     childProcess.on("close", (code) => {
