@@ -1,7 +1,7 @@
 import { readdirSync } from "fs";
 import { sep } from "path";
 import { InterpolateParameters } from "./models";
-import { spawn } from "child_process";
+import { spawn } from "cross-spawn";
 import { normalize } from "path"
 
 export class Utils {
