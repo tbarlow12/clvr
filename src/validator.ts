@@ -135,7 +135,7 @@ export class Validator {
   }
 
   private static validateCustom (
-    custom: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | void},
+    custom: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | undefined} | undefined,
     stdout: string,
     stderr: string,
     parameters: InterpolateParameters) {
@@ -144,5 +144,4 @@ export class Validator {
     }
     return custom(parameters, stdout, stderr);
   }
-
 }

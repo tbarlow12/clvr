@@ -378,8 +378,12 @@ describe("Validator", () => {
       const validation: CommandValidation = {
         command,
         custom: (parameters, stdout, stderr) => {
-          stdout === `hello ${parameters["param1"]}`
-          stderr === `hello ${parameters["param2"]}`
+          if (stdout !== `hello ${parameters["param1"]}`) {
+            return "stdout was not the expected value";
+          }
+          if (stderr !== `hello ${parameters["param2"]}`) {
+            return "stderr was not the expected value"
+          }
         }
       }
       const results = initial();
@@ -395,8 +399,12 @@ describe("Validator", () => {
       const validation: CommandValidation = {
         command,
         custom: (parameters, stdout, stderr) => {
-          stdout === `hello ${parameters["param1"]}`
-          stderr === `hello ${parameters["param2"]}`
+          if (stdout !== `hello ${parameters["param1"]}`) {
+            return "stdout was not the expected value";
+          }
+          if (stderr !== `hello ${parameters["param2"]}`) {
+            return "stderr was not the expected value"
+          }
         }
       }
       const results = initial();

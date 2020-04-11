@@ -121,5 +121,5 @@ export interface CommandValidation {
   /** Object that describes expected state of files in directory after test is run */
   files?: FileValidation;
   /** Custom predicate for command result */
-  custom?: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | void}
+  custom?: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | undefined}
 }
