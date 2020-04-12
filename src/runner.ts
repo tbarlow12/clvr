@@ -46,6 +46,8 @@ export function errorMessage(
   results: DirectoryResultSet) {
   const message = `\nstdout: ${stdout}\nstderr: ${stderr}`
   results[command] = {
+    directory,
+    command,
     run: true,
     passed: false,
     failureMessage: message,

@@ -27,6 +27,10 @@ export interface DirectoryResultSet {
  * Result of an individual test
  */
 export interface TestResult {
+  /** Directory for test result */
+  directory: string;
+  /** Command for test result */
+  command: string;
   /** Indicates if test passed or not */
   passed: boolean;
   /** Indicates if the test was run or not */
@@ -45,11 +49,17 @@ export interface TestResult {
  */
 export interface TestSummary {
   /** Summary of all tests that passed */
-  passed: string[];
+  passed: TestResult[];
   /** Summary of all tests that failed */
-  failed: string[];
+  failed: TestResult[];
   /** Summary of all tests that did not run */
-  skipped: string[];
+  skipped: TestResult[];
+}
+
+export enum TestState {
+  PASSED = "PASSED",
+  FAILED = "FAILED",
+  SKIPPED = "SKIPPED",
 }
 
 /**
@@ -121,5 +131,5 @@ export interface CommandValidation {
   /** Object that describes expected state of files in directory after test is run */
   files?: FileValidation;
   /** Custom predicate for command result */
-  custom?: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | undefined}
+  custom?: {(parameters: InterpolateParameters, stdout: string, stderr: string): void}
 }

@@ -2,6 +2,7 @@ import fs from "fs";
 import { join } from "path";
 import { FileValidation, InterpolateParameters, OutputValidation, CommandValidation, ResultSet, DirectoryResultSet } from "./models";
 import { Utils } from "./utils";
+import assert, { AssertionError } from "assert";
 
 export class Validator {
 
@@ -13,28 +14,29 @@ export class Validator {
     parameters: InterpolateParameters,
     results: DirectoryResultSet) {
 
-    const errorMessages = [
-      this.validateOutput(validation.stdout, stdout, parameters),
-      this.validateOutput(validation.stderr, stderr, parameters),
-      this.validateFiles(validation.files, directory, parameters),
-      this.validateCustom(validation.custom, stdout, stderr, parameters),
-    ].filter((value) => value !== undefined);
-    
-    if (errorMessages.length > 0) {
-      results[validation.command] = {
-        run: true,
-        passed: false,
-        failureMessage: errorMessages.join("\n"),
-        stdout,
-        stderr,
+    let failureMessage = undefined;
+    let passed: boolean = false;
+
+    try {
+      this.validateOutput(validation.stdout, stdout, parameters);
+      this.validateOutput(validation.stderr, stderr, parameters);
+      this.validateFiles(validation.files, directory, parameters);
+      this.validateCustom(validation.custom, stdout, stderr, parameters);
+      passed = true;
+    } catch (err) {
+      if (err instanceof AssertionError) {
+        failureMessage = JSON.stringify(err);
       }
-    } else {
-      results[validation.command] = {
-        run: true,
-        passed: true,
-        stdout,
-        stderr,
-      }
+    }
+
+    results[validation.command] = {
+      directory,
+      command: validation.command,
+      run: true,
+      passed,
+      failureMessage,
+      stdout,
+      stderr,
     }
   }
   
@@ -57,35 +59,30 @@ export class Validator {
       throw new Error("Can't specify both `shouldBeExactly` and `shouldContain`");
     }
 
-    if (isEmpty !== undefined) {
-      const outputIsEmpty = output === "";
-      if (isEmpty !== outputIsEmpty) {
-        return `Expected isEmpty to be ${isEmpty} but got ${outputIsEmpty}`
-      }
+    if (isEmpty === false) {
+      assert.notEqual(output, "");
+    }
+
+    if (isEmpty) {
+      assert.equal(output, "");
     }
 
     if (shouldBeExactly) {
       const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
-      if (output !== interpolated) {
-        return `Expected: ${interpolated}\nReceived: ${output}`;
-      }
+      assert.equal(output, interpolated);
     }
 
     if (shouldContain) {
       for (const item of shouldContain) {
         const interpolated = Utils.interpolateString(item, parameters);
-        if (!output.includes(interpolated)) {
-          return `Output was supposed to contain '${item}'`;
-        }
+        assert.equal(output.includes(interpolated), true, `Output does not contain '${interpolated}'`);
       }
     }
 
     if (shouldNotContain) {
       for (const item of shouldNotContain) {
         const interpolated = Utils.interpolateString(item, parameters);
-        if (output.includes(interpolated)) {
-          return `Output was not supposed to contain '${item}'`;
-        }
+        assert.equal(output.includes(interpolated), false, `Output contains '${interpolated}'`);
       }
     }
   }
@@ -110,32 +107,27 @@ export class Validator {
       const path = join(process.cwd(), directory, filename);
       if (shouldExist !== undefined) {
         const exists = fs.existsSync(path);
-        if (exists !== shouldExist) {
-          return `Expected ${path} exists to be ${shouldExist}, but got ${exists}`
-        }
+        assert.equal(exists, shouldExist);
       }
 
       if (shouldContain) {
         const content = fs.readFileSync(path).toString();
         for (const item of shouldContain) {
           const interpolated = Utils.interpolateString(item, parameters);
-          if (!content.includes(interpolated)) {
-            return `File ${filename} did not contain '${interpolated}'`;
-          }
+          assert.equal(content.includes(interpolated), true, `Content does not contain '${interpolated}'`);
         }
       }
 
       if (shouldBeExactly) {
         const content = fs.readFileSync(path).toString();
-        if (content !== shouldBeExactly) {
-          return `File content for ${path} was not exactly '${shouldBeExactly}'`
-        }
+        const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
+        assert.equal(content, interpolated);
       }
     }
   }
 
   private static validateCustom (
-    custom: {(parameters: InterpolateParameters, stdout: string, stderr: string): string | undefined} | undefined,
+    custom: {(parameters: InterpolateParameters, stdout: string, stderr: string): void} | undefined,
     stdout: string,
     stderr: string,
     parameters: InterpolateParameters) {

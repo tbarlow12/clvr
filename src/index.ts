@@ -1,5 +1,13 @@
 export {
-  Clover
+  run,
 } from "./clover"
 
-export * from "./models"
+export {
+  Summarizers
+} from "./summarizers"
+
+export {
+  CloverTest,
+  InterpolateParameters,
+  ResultSet,
+} from "./models"
