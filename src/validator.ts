@@ -1,8 +1,9 @@
+import { AssertionError } from "assert";
 import fs from "fs";
 import { join } from "path";
-import { FileValidation, InterpolateParameters, OutputValidation, CommandValidation, ResultSet, DirectoryResultSet } from "./models";
+import { Assert } from "./assert";
+import { CommandValidation, ContentValidation, DirectoryResultSet, FileStructureValidation, InterpolateParameters } from "./models";
 import { Utils } from "./utils";
-import assert, { AssertionError } from "assert";
 
 export class Validator {
 
@@ -25,7 +26,9 @@ export class Validator {
       passed = true;
     } catch (err) {
       if (err instanceof AssertionError) {
-        failureMessage = JSON.stringify(err);
+        failureMessage = err;
+      } else {
+        failureMessage = JSON.stringify(err, null, 2);
       }
     }
 
@@ -41,88 +44,73 @@ export class Validator {
   }
   
   private static validateOutput(
-    outputValidation: OutputValidation|undefined,
+    outputValidation: ContentValidation|undefined,
     output: string,
     parameters: InterpolateParameters): string | undefined {
     if (!outputValidation) {
       return;
     }
     
+    this.validateContent(output, outputValidation, parameters);    
+  }
+
+  private static validateFiles(
+    fileValidation: FileStructureValidation | undefined,
+    directory: string,
+    parameters: InterpolateParameters): string | undefined {
+    
+    if (!fileValidation){
+      return;
+    }
+
+    const assert = new Assert(parameters);
+
+    for (const key of Object.keys(fileValidation)) {
+      const contentValidation = fileValidation[key];
+      const filename = Utils.interpolateString(key, parameters);
+      const path = join(process.cwd(), directory, filename);
+      const { shouldExist } = contentValidation;
+      
+      if (shouldExist !== undefined) {
+        assert.fileExists(path, shouldExist);
+      }
+
+      const content = fs.existsSync(path) ? fs.readFileSync(path).toString() : "";
+      this.validateContent(content, contentValidation, parameters);
+    }
+  }
+
+  private static validateContent(content: string, validation: ContentValidation, parameters: InterpolateParameters) {
+    const assert = new Assert(parameters);
     const {
       shouldBeExactly,
       shouldContain,
       shouldNotContain,
       isEmpty,
-    } = outputValidation;
+    } = validation;
 
     if (shouldBeExactly && shouldContain) {
       throw new Error("Can't specify both `shouldBeExactly` and `shouldContain`");
     }
 
     if (isEmpty === false) {
-      assert.notEqual(output, "");
+      assert.notEmpty(content);
     }
 
     if (isEmpty) {
-      assert.equal(output, "");
+      assert.empty(content);
     }
 
     if (shouldBeExactly) {
-      const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
-      assert.equal(output, interpolated);
+      assert.exactly(content, shouldBeExactly);
     }
 
     if (shouldContain) {
-      for (const item of shouldContain) {
-        const interpolated = Utils.interpolateString(item, parameters);
-        assert.equal(output.includes(interpolated), true, `Output does not contain '${interpolated}'`);
-      }
+      assert.containsAll(content, shouldContain);
     }
 
     if (shouldNotContain) {
-      for (const item of shouldNotContain) {
-        const interpolated = Utils.interpolateString(item, parameters);
-        assert.equal(output.includes(interpolated), false, `Output contains '${interpolated}'`);
-      }
-    }
-  }
-
-  private static validateFiles(
-    fileValidation: FileValidation | undefined,
-    directory: string,
-    parameters: InterpolateParameters): string | undefined {
-    if (!fileValidation){
-      return;
-    }
-
-    for (const key of Object.keys(fileValidation)) {
-      const { shouldExist, shouldContain, shouldBeExactly } = fileValidation[key];
-      
-      if (shouldExist === undefined && !shouldContain && !shouldBeExactly) {
-        continue;
-      }
-
-      const filename = Utils.interpolateString(key, parameters);
-
-      const path = join(process.cwd(), directory, filename);
-      if (shouldExist !== undefined) {
-        const exists = fs.existsSync(path);
-        assert.equal(exists, shouldExist);
-      }
-
-      if (shouldContain) {
-        const content = fs.readFileSync(path).toString();
-        for (const item of shouldContain) {
-          const interpolated = Utils.interpolateString(item, parameters);
-          assert.equal(content.includes(interpolated), true, `Content does not contain '${interpolated}'`);
-        }
-      }
-
-      if (shouldBeExactly) {
-        const content = fs.readFileSync(path).toString();
-        const interpolated = Utils.interpolateString(shouldBeExactly, parameters);
-        assert.equal(content, interpolated);
-      }
+      assert.containsNone(content, shouldNotContain);
     }
   }
 

@@ -64,6 +64,11 @@ describe("Clover", () => {
               shouldContain: [
                 "output.txt"
               ]
+            },
+            files: {
+              "output.txt": {
+                shouldExist: true,
+              }
             }
           },
           {
@@ -144,8 +149,8 @@ describe("Clover", () => {
     allTestsAssertion(tests, (testResult) => {
       const { run, passed, failureMessage } = testResult;
       expect(run).toBe(true);
-      expect(passed).toBe(true);
       expect(failureMessage).toBeUndefined();
+      expect(passed).toBe(true);
     });
   }
 })

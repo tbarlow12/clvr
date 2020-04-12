@@ -305,7 +305,7 @@ describe("Validator", () => {
           command,
           files: {
             "jest.setup.js": {
-              shouldBeExactly: "jest.setTimeout(30000);"
+              shouldBeExactly: "jest.setTimeout(60000);"
             }
           }
         }

@@ -1,3 +1,5 @@
+import { AssertionError } from "assert";
+
 export interface CloverTest {
   name?: string;
   validations: CommandValidation[];
@@ -36,7 +38,7 @@ export interface TestResult {
   /** Indicates if the test was run or not */
   run: boolean;
   /** Failure message if applicable */
-  failureMessage?: string;
+  failureMessage?: AssertionError|string;
   /** Full stdout of test */
   stdout?: string;
   /** Full stderr of test */
@@ -65,7 +67,7 @@ export enum TestState {
 /**
  * Expected conditions for an output stream (stdout or stderr)
  */
-export interface OutputValidation {
+export interface ContentValidation {
   /** 
    * The output should be *exactly* this string.
    * Allows for interpolation of ${variables}
@@ -87,17 +89,14 @@ export interface OutputValidation {
   isEmpty?: boolean;
 }
 
+export interface FileValidation extends ContentValidation {
+  shouldExist?: boolean;
+}
+
 /** Expected conditions for state of files in directory after command is run */
-export interface FileValidation {
+export interface FileStructureValidation {
   /** Dictionary of descriptions of expected conditions, keyed by filename */
-  [ fileName: string ]: {
-    /** Indicates whether a file should exist within the test directory */
-    shouldExist?: boolean;
-    /** The file contents should contain ALL of these strings */
-    shouldContain?: string[];
-    /** The file content should be *exactly* this string */
-    shouldBeExactly?: string;
-  };
+  [ fileName: string ]: FileValidation;
 }
 
 /**
@@ -125,11 +124,11 @@ export interface CommandValidation {
   /** Full string (including arguments) of command to run */
   command: string;
   /** Object that describes expected output to stdout */
-  stdout?: OutputValidation;
+  stdout?: ContentValidation;
   /** Object that describes expected output to stderr */
-  stderr?: OutputValidation;
+  stderr?: ContentValidation;
   /** Object that describes expected state of files in directory after test is run */
-  files?: FileValidation;
+  files?: FileStructureValidation;
   /** Custom predicate for command result */
   custom?: {(parameters: InterpolateParameters, stdout: string, stderr: string): void}
 }
