@@ -1,5 +1,6 @@
 import { Validator } from "./validator"
 import { CommandValidation, ResultSet, DirectoryResultSet, InterpolateParameters } from "./models";
+import assert from "assert";
 
 describe("Validator", () => {
   const command = "stub command";
@@ -378,12 +379,8 @@ describe("Validator", () => {
       const validation: CommandValidation = {
         command,
         custom: (parameters, stdout, stderr) => {
-          if (stdout !== `hello ${parameters["param1"]}`) {
-            return "stdout was not the expected value";
-          }
-          if (stderr !== `hello ${parameters["param2"]}`) {
-            return "stderr was not the expected value"
-          }
+          assert.equal(stdout, `hello ${parameters["param1"]}`);
+          assert.equal(stderr, `hello ${parameters["param2"]}`);
         }
       }
       const results = initial();
@@ -399,12 +396,8 @@ describe("Validator", () => {
       const validation: CommandValidation = {
         command,
         custom: (parameters, stdout, stderr) => {
-          if (stdout !== `hello ${parameters["param1"]}`) {
-            return "stdout was not the expected value";
-          }
-          if (stderr !== `hello ${parameters["param2"]}`) {
-            return "stderr was not the expected value"
-          }
+          assert.equal(stdout, `hello ${parameters["param1"]}`);
+          assert.equal(stderr, `hello ${parameters["param2"]}`);
         }
       }
       const results = initial();
@@ -432,6 +425,8 @@ describe("Validator", () => {
   function initial(): DirectoryResultSet {
     const resultSet: DirectoryResultSet = {}
     resultSet[command] = {
+      directory: ".",
+      command,
       run: true,
       passed: false,
     }

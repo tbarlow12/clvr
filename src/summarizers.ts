@@ -1,9 +1,11 @@
-import { ResultSet, TestSummary } from "./models";
+import { ResultSet, TestSummary, TestResult, TestState } from "./models";
 import { Logger } from "./logger";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
-    Summarizers.printSummary(Summarizers.getBriefSummary(results));
+    Summarizers.printSummary(results, (result, state) => {
+      return JSON.stringify(result, null, 2);
+    });
   }
 
   public static verbose(results: ResultSet) {
@@ -14,15 +16,16 @@ export class Summarizers {
 
   }
 
-  private static printSummary(summary: TestSummary) {
+  private static printSummary(results: ResultSet, stringify: (result: TestResult, state: TestState) => string) {
+    const summary = this.getTestSummary(results)
     const {
       passed,
       failed,
       skipped
     } = summary;
-    Logger.green(passed.join("\n"));
-    Logger.warn(skipped.join("\n"));
-    Logger.error(failed.join("\n"));
+    Logger.green(passed.map((result) => stringify(result, TestState.PASSED)).join("\n"));
+    Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
+    Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
     if (failed.length > 0) {
       process.exit(1);
     }
@@ -32,7 +35,7 @@ export class Summarizers {
    * Get brief summary of tests that passed, failed or were skipped
    * @param results Test results
    */
-  private static getBriefSummary(results: ResultSet): TestSummary {
+  private static getTestSummary(results: ResultSet): TestSummary {
     return {
       passed: Summarizers.getResultSummary(results, true, true),
       failed: Summarizers.getResultSummary(results, true, false),
@@ -40,18 +43,13 @@ export class Summarizers {
     };
   }
 
-  private static getResultSummary(results: ResultSet, run: boolean, passed: boolean): string[] {
+  private static getResultSummary(results: ResultSet, run: boolean, passed: boolean): TestResult[] {
     const filtered = [];
     for (const directoryName of Object.keys(results)) {
       for (const testName of Object.keys(results[directoryName])) {
         const testResult = results[directoryName][testName];
         if (testResult.passed === passed && testResult.run === run) {
-          const result = (passed) ? "PASSED" : "FAILED";
-          let summary = `${result} - ${directoryName} - ${testName}`;
-          if (testResult.failureMessage) {
-            summary += ` - ${testResult.failureMessage}`
-          }
-          filtered.push(summary);
+          filtered.push(testResult);
         }
       }
     }

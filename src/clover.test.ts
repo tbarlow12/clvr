@@ -1,4 +1,4 @@
-import { Clover } from "./clover";
+import { run } from "./clover";
 import { CloverTest, ResultSet, TestResult } from "./models";
 
 jest.mock("./logger");
@@ -17,7 +17,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await Clover.run(tests);
+    await run(tests);
     tests.forEach((test) => {
       const results = test.results as ResultSet;
       expect(results).toBeDefined();
@@ -77,7 +77,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await Clover.run(tests);
+    await run(tests);
     allTestsPassed(tests);
   });
 
@@ -91,7 +91,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await expect(Clover.run(tests)).rejects.toThrow();
+    await expect(run(tests)).rejects.toThrow();
   });
 
   it("does not run empty directory set", async () => {
@@ -108,7 +108,7 @@ describe("Clover", () => {
         directories: []
       }
     ]
-    await expect(Clover.run(tests)).rejects.toThrow();
+    await expect(run(tests)).rejects.toThrow();
     noTestsRun(tests);
   });
 

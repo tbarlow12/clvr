@@ -12,7 +12,9 @@ export class Initializer {
         }
         results[dirName][v.command] = {
           passed: false,
-          run: false
+          run: false,
+          directory: dirName,
+          command: v.command,
         }
       }
     }
