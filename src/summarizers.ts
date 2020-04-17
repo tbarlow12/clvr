@@ -1,6 +1,7 @@
 import { ResultSet, TestSummary, TestResult, TestState } from "./models";
 import { Logger } from "./logger";
 import path from "path";
+import { AssertionError } from "assert";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
@@ -45,7 +46,7 @@ export class Summarizers {
     Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
     Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
     if (failed.length > 0) {
-      process.exit(1);
+      throw new Error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
     }
   }
   
