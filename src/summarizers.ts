@@ -8,7 +8,7 @@ export class Summarizers {
     Summarizers.printSummary(results, (result, state) => {
       const { directory, command, failureMessage } = result;
       const dirName = path.normalize(directory)
-        .substring(directory.lastIndexOf(path.sep));
+        .substring(directory.lastIndexOf(path.sep) + 1);
       let message = `${state} - ${dirName} - ${command}`;
       if (failureMessage) {
         message += `- ${failureMessage}`;
@@ -21,7 +21,7 @@ export class Summarizers {
     Summarizers.printSummary(results, (result, state) => {
       const { directory, command, failureMessage, stdout} = result;
       const dirName = path.normalize(directory)
-        .substring(directory.lastIndexOf(path.sep));
+        .substring(directory.lastIndexOf(path.sep) + 1);
       let message = `${state} - ${dirName} - ${command}`;
       if (failureMessage) {
         message += ` - ${failureMessage}`;
