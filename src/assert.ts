@@ -1,6 +1,6 @@
 import { InterpolateParameters } from "./models"
 import { Utils } from "./utils"
-import assert from "assert";
+import assert, { AssertionError } from "assert";
 import fs from "fs";
 
 export class Assert {
@@ -12,25 +12,36 @@ export class Assert {
   }
   
   public empty(actual: string): void {
-    assert.equal(actual, "");
+    if (actual !== "") {
+      this.fail(`Expected an empty string, but got '${actual}'`);
+    }
   }
 
   public notEmpty(actual: string): void {
-    assert.notEqual(actual, "");
+    if (actual === "") {
+      this.fail(`Expected not to be empty`);
+    }
   }
 
   public exactly(actual: string, expected: string): void {
+    if (actual !== expected) {
+      this.fail(`Expected '${expected}' Actual '${actual}'`)
+    }
     assert.equal(actual, this.interpolate(expected));
   }
 
   public contains(actual: string, expected: string): void {
     const interpolated = this.interpolate(expected);
-    assert.equal(actual.includes(interpolated), true, `Output does not contain '${interpolated}'`);
+    if (!actual.includes(interpolated)) {
+      this.fail(`Output does not contain '${interpolated}'`);
+    }
   }
 
   public doesNotContain(actual: string, expected: string): void {
     const interpolated = this.interpolate(expected);
-    assert.equal(actual.includes(interpolated), false, `Output should not contain '${interpolated}'`);
+    if (actual.includes(interpolated)) {
+      this.fail(`Output should not contain '${interpolated}'`);
+    }
   }
 
   public containsAll(actual: string, substrings: string[]): void {
@@ -43,10 +54,16 @@ export class Assert {
 
   public fileExists(path: string, shouldExist: boolean): void {
     const exists = fs.existsSync(path);
-    assert.equal(shouldExist, exists);
+    if (exists !== shouldExist) {
+      this.fail(`Expected file ${path} to exist: ${shouldExist} File exists: ${exists}`)
+    }
   }
 
   private interpolate(expected: string): string {
     return Utils.interpolateString(expected, this.parameters);
+  }
+
+  private fail(message: string) {
+    throw new AssertionError({message});
   }
 }

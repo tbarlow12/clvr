@@ -1,15 +1,34 @@
 import { ResultSet, TestSummary, TestResult, TestState } from "./models";
 import { Logger } from "./logger";
+import path from "path";
+import { AssertionError } from "assert";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
     Summarizers.printSummary(results, (result, state) => {
-      return JSON.stringify(result, null, 2);
+      const { directory, command, failureMessage } = result;
+      const dirName = path.normalize(directory)
+        .substring(directory.lastIndexOf(path.sep));
+      let message = `${state} - ${dirName} - ${command}`;
+      if (failureMessage) {
+        message += `- ${failureMessage}`;
+      }
+      return message;
     });
   }
 
   public static verbose(results: ResultSet) {
-
+    Summarizers.printSummary(results, (result, state) => {
+      const { directory, command, failureMessage, stdout} = result;
+      const dirName = path.normalize(directory)
+        .substring(directory.lastIndexOf(path.sep));
+      let message = `${state} - ${dirName} - ${command}`;
+      if (failureMessage) {
+        message += ` - ${failureMessage}`;
+      }
+      message += `\nstdout:\n${stdout}`
+      return message;
+    });
   }
 
   public static markdownTable(results: ResultSet) {
@@ -27,7 +46,7 @@ export class Summarizers {
     Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
     Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
     if (failed.length > 0) {
-      process.exit(1);
+      throw new Error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
     }
   }
   

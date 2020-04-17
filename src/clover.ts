@@ -9,7 +9,7 @@ import { Summarizers } from "./summarizers";
  * @param tests Array of clover tests to run
  * @param summarizer 
  */
-export async function run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.brief): Promise<CloverTest[]> {
+export async function run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.verbose): Promise<CloverTest[]> {
   for (const test of tests) {
     const { validations, directories, parameters } = test;
     try {
