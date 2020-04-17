@@ -1,15 +1,33 @@
 import { ResultSet, TestSummary, TestResult, TestState } from "./models";
 import { Logger } from "./logger";
+import path from "path";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
     Summarizers.printSummary(results, (result, state) => {
-      return JSON.stringify(result, null, 2);
+      const { directory, command, failureMessage } = result;
+      const dirName = path.normalize(directory)
+        .substring(directory.lastIndexOf(path.sep));
+      let message = `${state} - ${dirName} - ${command}`;
+      if (failureMessage) {
+        message += `- ${failureMessage}`;
+      }
+      return message;
     });
   }
 
   public static verbose(results: ResultSet) {
-
+    Summarizers.printSummary(results, (result, state) => {
+      const { directory, command, failureMessage, stdout} = result;
+      const dirName = path.normalize(directory)
+        .substring(directory.lastIndexOf(path.sep));
+      let message = `${state} - ${dirName} - ${command}`;
+      if (failureMessage) {
+        message += ` - ${failureMessage}`;
+      }
+      message += `\nstdout:\n${stdout}`
+      return message;
+    });
   }
 
   public static markdownTable(results: ResultSet) {

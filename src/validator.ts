@@ -26,7 +26,7 @@ export class Validator {
       passed = true;
     } catch (err) {
       if (err instanceof AssertionError) {
-        failureMessage = err;
+        failureMessage = err.message;
       } else {
         failureMessage = JSON.stringify(err, null, 2);
       }

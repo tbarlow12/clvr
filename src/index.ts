@@ -10,4 +10,5 @@ export {
   CloverTest,
   InterpolateParameters,
   ResultSet,
+  CommandValidation
 } from "./models"
