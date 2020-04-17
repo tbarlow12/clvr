@@ -15,9 +15,11 @@ jobs:
       with:
         path: node_modules
         key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
-    - name: Build
+    - name: npm install
       if: steps.cache-modules.outputs.cache-hit != 'true'
       run: npm install
+    - name: build
+      run: tsc
     - name: Test coverage
       run: npm run test:coverage
     - uses: codecov/codecov-action@v1
