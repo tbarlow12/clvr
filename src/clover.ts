@@ -1,5 +1,5 @@
 import { Initializer } from "./initializer";
-import { CommandValidation, DirectoryParameters, ResultSet, CloverTest } from "./models";
+import { CommandValidation, Parameters, ResultSet, CloverTest } from "./models";
 import { runCommandChain } from "./runner";
 import { Utils } from "./utils";
 import { Summarizers } from "./summarizers";
@@ -32,7 +32,7 @@ export async function run(tests: CloverTest[], summarizer: (results: ResultSet) 
 function execute(
   validations: CommandValidation[],
   directories: string[],
-  parameters: DirectoryParameters = {}): Promise<ResultSet> {
+  parameters: Parameters = {}): Promise<ResultSet> {
   return new Promise((resolve, reject) => {
     let testsCompleted = 0;
     const results = Initializer.resultSet(directories, validations);
