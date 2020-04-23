@@ -111,6 +111,9 @@ export interface ContentValidation {
 }
 
 export interface FileValidation extends ContentValidation {
+  /**
+   * Specifies whether or not the file should exist
+   */
   shouldExist?: boolean;
 }
 
