@@ -1,10 +1,31 @@
 import { AssertionError } from "assert";
 
 export interface CloverTest {
-  name?: string;
+  /**
+   * The only required property. Array of commands to 
+   * execute along with their accompanying assertions.
+   */
   validations: CommandValidation[];
+  /**
+   * Name of test to be used in output
+   */
+  name?: string;
+  /**
+   * Directories in which to execute the commands.
+   * Relative to the current working directory.
+   */
   directories?: string[];
-  parameters?: DirectoryParameters;
+  /**
+   * String parameters for string interpolation in commands, 
+   * paths or assertions. Broken down by directory.
+   */
+  parameters?: Parameters;
+  /**
+   * Should not be added by user. Because this is an
+   * asynchronous process, each test result is attached to
+   * the test object from which it came. The results are
+   * printed out at the end of all test executions.
+   */
   results?: ResultSet;
 }
 
@@ -90,6 +111,9 @@ export interface ContentValidation {
 }
 
 export interface FileValidation extends ContentValidation {
+  /**
+   * Specifies whether or not the file should exist
+   */
   shouldExist?: boolean;
 }
 
@@ -111,7 +135,7 @@ export interface InterpolateParameters {
  * Dictionary of parameter sets, keyed by the NAME of the
  * directory using the parameter set
  */
-export interface DirectoryParameters {
+export interface Parameters {
   /** Dictionary of parameter dictionaries. Key is directory name */
   [dir: string]: InterpolateParameters;
 }
