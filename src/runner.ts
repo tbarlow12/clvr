@@ -16,8 +16,12 @@ export async function runCommandChain(
       return;
     }
     const validation = validations[0];
-    validation.command = Utils.interpolateString(validation.command, parameters);
-    const command = validation.command;
+
+    // If condition predicate is defined and returns false, the step is skipped
+    if (validation.condition && !validation.condition(directory)) {
+      return runCommandChain(directory, validations.slice(1, validations.length), results, parameters, onFinish);
+    }
+    const command = Utils.interpolateString(validation.command, parameters);
     const split = command.split(" ");
     const commandName = split[0];
     const args = split.slice(1, split.length);

@@ -11,9 +11,11 @@ import { Summarizers } from "./summarizers";
  */
 export async function run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.verbose): Promise<CloverTest[]> {
   for (const test of tests) {
-    const { validations, directories, parameters } = test;
+    const { validations, parameters } = test;
+    const directories = test.directories || ["."]
+    test.results = Initializer.resultSet(directories as string[], validations);
     try {
-      const results = await execute(validations, directories || ["."], parameters);
+      const results = await execute(validations, directories, parameters);
       summarizer(results);
       test.results = results;
     } catch (err) {
@@ -42,7 +44,7 @@ function execute(
     directories.forEach(directory => {
       const dirName = Utils.getDirName(directory);
       // TODO start timer here
-      runCommandChain(directory, validations, {}, parameters[dirName],
+      runCommandChain(directory, validations, results[dirName], parameters[dirName],
         (testResults) => {
           results[dirName] = testResults;
           testsCompleted += 1;

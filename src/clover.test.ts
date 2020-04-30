@@ -114,7 +114,8 @@ describe("Clover", () => {
       }
     ]
     await expect(run(tests)).rejects.toThrow();
-    noTestsRun(tests);
+    expect(tests).toHaveLength(1);
+    expect(tests[0].results).toEqual({});
   });
 
   it("runs test with the default summarizer", async () => {
@@ -123,6 +124,58 @@ describe("Clover", () => {
 
   it("runs test with a custom summarizer", async () => {
 
+  });
+
+  it("skips test if condition returns false", async () => {
+    const tests: CloverTest[] = [
+      {
+        validations: [
+          {
+            command: "cat ${fileName}",
+            condition: (dir) => dir === "test/dir2",
+            stdout: {
+              shouldBeExactly: "Hi!",
+            }
+          }
+        ],
+        directories: [ "test/dir1", "test/dir2" ],
+        parameters: {
+          dir1: {
+            fileName: "hello.txt",
+            value: "Hello",
+          },
+          dir2: {
+            fileName: "hi.txt",
+            value: "Hi",
+          }
+        }
+      }
+    ]
+    await run(tests);
+
+    const { results } = tests[0];
+
+    expect(results).toBeDefined();
+
+    // TypeScript undefined check
+    if (results) {
+      const { dir1, dir2 } = results;
+      
+      expect(dir1).toBeDefined();
+      expect(dir2).toBeDefined();
+  
+      // dir1 should have been skipped
+      const dir1Result = dir1["cat ${fileName}"];
+      expect(dir1Result).toBeDefined();
+      expect(dir1Result.passed).toBe(false);
+      expect(dir1Result.run).toBe(false);
+  
+      // dir2 should have passed
+      const dir2Result = dir2["cat ${fileName}"];
+      expect(dir2Result).toBeDefined();
+      expect(dir2Result.passed).toBe(true);
+      expect(dir2Result.run).toBe(true);
+    }
   });
 
   function allTestsAssertion(tests: CloverTest[], assertion: (result: TestResult) => void) {
@@ -135,13 +188,6 @@ describe("Clover", () => {
           assertion(dirResults[command]);
         }
       }
-    });
-  }
-
-  function noTestsRun(tests: CloverTest[]) {
-    tests.forEach((test) => {
-      const results = test.results as ResultSet;
-      expect(results).toBeUndefined();
     });
   }
 
