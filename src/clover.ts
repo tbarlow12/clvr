@@ -14,13 +14,9 @@ export async function run(tests: CloverTest[], summarizer: (results: ResultSet) 
     const { validations, parameters } = test;
     const directories = test.directories || ["."]
     test.results = Initializer.resultSet(directories as string[], validations);
-    try {
-      const results = await execute(validations, directories, parameters);
-      summarizer(results);
-      test.results = results; 
-    } catch (err) {
-      return Promise.reject(err);
-    }    
+    const results = await execute(validations, directories, parameters);
+    summarizer(results);
+    test.results = results; 
   }
   return tests;
 }
