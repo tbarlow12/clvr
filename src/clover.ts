@@ -3,13 +3,22 @@ import { CommandValidation, Parameters, ResultSet, CloverTest } from "./models";
 import { runCommandChain } from "./runner";
 import { Utils } from "./utils";
 import { Summarizers } from "./summarizers";
+import { Logger } from "./logger";
+
+/**
+ * Run clover tests
+ * @param tests Array of clover tests to run
+ */
+export function run(tests: CloverTest[]) {
+  runInternal(tests).catch(() => { process.exit(1); });
+}
 
 /**
  * Run clover tests
  * @param tests Array of clover tests to run
  * @param summarizer 
  */
-export async function run(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.verbose): Promise<CloverTest[]> {
+export async function runInternal(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.verbose): Promise<CloverTest[]> {
   for (const test of tests) {
     const { validations, parameters } = test;
     const directories = test.directories || ["."]
@@ -19,6 +28,7 @@ export async function run(tests: CloverTest[], summarizer: (results: ResultSet) 
       summarizer(results);
       test.results = results; 
     } catch (err) {
+      Logger.error(err);
       return Promise.reject(err);
     }    
   }

@@ -1,4 +1,4 @@
-import { run } from "./clover";
+import { runInternal } from "./clover";
 import { CloverTest, ResultSet, TestResult } from "./models";
 
 jest.mock("./logger");
@@ -18,7 +18,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await run(tests);
+    await runInternal(tests);
     tests.forEach((test) => {
       const results = test.results as ResultSet;
       expect(results).toBeDefined();
@@ -83,7 +83,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await run(tests);
+    await runInternal(tests);
     allTestsPassed(tests);
   });
 
@@ -97,7 +97,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await expect(run(tests)).rejects.toEqual(expect.any(String));
+    await expect(runInternal(tests)).rejects.toEqual(expect.any(String));
   });
 
   it("does not run empty directory set", async () => {
@@ -114,7 +114,7 @@ describe("Clover", () => {
         directories: []
       }
     ]
-    await expect(run(tests)).rejects.toEqual(expect.any(String));
+    await expect(runInternal(tests)).rejects.toEqual(expect.any(String));
     expect(tests).toHaveLength(1);
     expect(tests[0].results).toEqual({});
   });
@@ -152,7 +152,7 @@ describe("Clover", () => {
         }
       }
     ]
-    await run(tests);
+    await runInternal(tests);
 
     const { results } = tests[0];
 
