@@ -71,18 +71,18 @@ As you can see, the only required attribute in a `CloverTest` is `validations`, 
 
 Each command can make 0 or many assertions. Here are the types of assertions that can be used:
 
-- `stdout`
+- `stdout` - Assertions based on stdout of command
   - `shouldBeExactly` - `string` - The output should be *exactly* this string.
   - `shouldContain` - `string[]` - The output should contain ALL of these strings.
   - `shouldNotContain` - `string[]` - The output should contain NONE of these strings.
   - `isEmpty` - `boolean` - Specifies whether or not the output should be empty
-- `stderr`
+- `stderr` - Assertions based on stderr of command
   - `shouldBeExactly` - `string` - The output should be *exactly* this string.
   - `shouldContain` - `string[]` - The output should contain ALL of these strings.
   - `shouldNotContain` - `string[]` - The output should contain NONE of these strings.
   - `isEmpty` - `boolean` - Specifies whether or not the output should be empty
-- `files`
-  - `shouldExist`
+- `files` - Assertions based on file states as result of command
+  - `shouldExist` - `boolean` - Specifies whether or not the file should exist
   - `shouldBeExactly` - `string` - The file content should be *exactly* this string.
   - `shouldContain` - `string[]` - The file content should contain ALL of these strings.
   - `shouldNotContain` - `string[]` - The file content should contain NONE of these strings.

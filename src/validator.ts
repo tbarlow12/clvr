@@ -40,6 +40,7 @@ export class Validator {
       failureMessage,
       stdout,
       stderr,
+      silent: validation.silent,
     }
   }
   

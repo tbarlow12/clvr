@@ -20,7 +20,7 @@ export async function run(tests: CloverTest[], summarizer: (results: ResultSet) 
       test.results = results;
     } catch (err) {
       throw new Error(err);
-    }      
+    } 
   }
   return tests;
 }
