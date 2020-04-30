@@ -1,7 +1,6 @@
-import { ResultSet, TestSummary, TestResult, TestState } from "./models";
-import { Logger } from "./logger";
 import path from "path";
-import { AssertionError } from "assert";
+import { Logger } from "./logger";
+import { ResultSet, TestResult, TestState, TestSummary } from "./models";
 
 export class Summarizers {
   public static brief(results: ResultSet) {
@@ -19,14 +18,16 @@ export class Summarizers {
 
   public static verbose(results: ResultSet) {
     Summarizers.printSummary(results, (result, state) => {
-      const { directory, command, failureMessage, stdout} = result;
+      const { directory, command, failureMessage, stdout, silent } = result;
       const dirName = path.normalize(directory)
         .substring(directory.lastIndexOf(path.sep) + 1);
       let message = `${state} - ${dirName} - ${command}`;
       if (failureMessage) {
         message += ` - ${failureMessage}`;
       }
-      message += `\nstdout:\n${stdout}`
+      if (!silent) {
+        message += `\nstdout:\n${stdout}`;
+      }
       return message;
     });
   }
@@ -46,7 +47,8 @@ export class Summarizers {
     Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
     Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
     if (failed.length > 0) {
-      throw new Error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
+      Logger.error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
+      process.exit(1);
     }
   }
   
