@@ -27,7 +27,6 @@ export class Assert {
     if (actual !== expected) {
       this.fail(`Expected '${expected}' Actual '${actual}'`)
     }
-    assert.equal(actual, this.interpolate(expected));
   }
 
   public contains(actual: string, expected: string): void {

@@ -155,4 +155,6 @@ export interface CommandValidation {
   files?: FileStructureValidation;
   /** Custom predicate for command result */
   custom?: {(parameters: InterpolateParameters, stdout: string, stderr: string): void}
+  /** Predicate condition that, if false, prevents the step from being run */
+  condition?: {(directory: string): boolean}
 }
