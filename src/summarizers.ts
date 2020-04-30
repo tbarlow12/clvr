@@ -47,8 +47,7 @@ export class Summarizers {
     Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
     Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
     if (failed.length > 0) {
-      Logger.error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
-      process.exit(1);
+      throw new Error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
     }
   }
   

@@ -4,6 +4,7 @@ import { CloverTest, ResultSet, TestResult } from "./models";
 jest.mock("./logger");
 
 describe("Clover", () => {
+
   it("runs a single test", async () => {
     const tests: CloverTest[] = [
       {
