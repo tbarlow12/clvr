@@ -17,10 +17,10 @@ export async function run(tests: CloverTest[], summarizer: (results: ResultSet) 
     try {
       const results = await execute(validations, directories, parameters);
       summarizer(results);
-      test.results = results;
+      test.results = results; 
     } catch (err) {
-      throw new Error(err);
-    } 
+      return Promise.reject(err);
+    }    
   }
   return tests;
 }

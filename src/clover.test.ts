@@ -97,7 +97,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await expect(run(tests)).rejects.toThrow();
+    await expect(run(tests)).rejects.toEqual(expect.any(String));
   });
 
   it("does not run empty directory set", async () => {
@@ -114,7 +114,7 @@ describe("Clover", () => {
         directories: []
       }
     ]
-    await expect(run(tests)).rejects.toThrow();
+    await expect(run(tests)).rejects.toEqual(expect.any(String));
     expect(tests).toHaveLength(1);
     expect(tests[0].results).toEqual({});
   });
