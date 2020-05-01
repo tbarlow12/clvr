@@ -25,8 +25,8 @@ export async function runInternal(tests: CloverTest[], summarizer: (results: Res
     test.results = Initializer.resultSet(directories as string[], validations);
     try {
       const results = await execute(validations, directories, parameters);
-      summarizer(results);
       test.results = results; 
+      summarizer(results);
     } catch (err) {
       Logger.error(err);
       return Promise.reject(err);
