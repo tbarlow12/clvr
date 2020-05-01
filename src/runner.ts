@@ -37,7 +37,19 @@ export async function runCommandChain(
         runCommandChain(directory, validations.slice(1, validations.length), results, parameters, onFinish);
         Logger.log(`${dirName} '${command}' finished`);
       },
-      (stdout, stderr) => reject(errorMessage(stdout, stderr, command, directory, results))
+      (stdout, stderr) => {
+        const failureMessage = errorMessage(stdout, stderr, command, directory, results)
+        results[validation.command] = {
+          command,
+          directory,
+          run: true,
+          passed: false,
+          failureMessage,
+          stdout,
+          stderr,
+        }
+        onFinish(results);
+      }
     );
   });
 }

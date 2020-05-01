@@ -1,5 +1,6 @@
 import { runInternal } from "./clover";
 import { CloverTest, ResultSet, TestResult } from "./models";
+import fs from "fs";
 
 jest.mock("./logger");
 
@@ -40,11 +41,28 @@ describe("Clover", () => {
   });
 
   it("commands actually perform the actions", async () => {
-
-  });
-
-  it("runs multiple independent commands", async () => {
-
+    const fileName = "temp.txt";
+    expect(fs.existsSync(fileName)).toBe(false);
+    await runInternal([
+      {
+        validations: [
+          {
+            command: `touch ${fileName}`
+          }
+        ]
+      }
+    ]);
+    expect(fs.existsSync(fileName)).toBe(true);
+    await runInternal([
+      {
+        validations: [
+          {
+            command: `rm ${fileName}`
+          }
+        ]
+      }
+    ]);
+    expect(fs.existsSync(fileName)).toBe(false);
   });
 
   it("runs multiple chained commands", async () => {
@@ -97,7 +115,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await expect(runInternal(tests)).rejects.toEqual(expect.any(String));
+    await expect(runInternal(tests)).rejects.toEqual(new Error("Failed 1 of 1 tests"));
   });
 
   it("does not run empty directory set", async () => {
@@ -117,14 +135,6 @@ describe("Clover", () => {
     await expect(runInternal(tests)).rejects.toEqual(expect.any(String));
     expect(tests).toHaveLength(1);
     expect(tests[0].results).toEqual({});
-  });
-
-  it("runs test with the default summarizer", async () => {
-
-  });
-
-  it("runs test with a custom summarizer", async () => {
-
   });
 
   it("skips test if condition returns false", async () => {
@@ -179,6 +189,54 @@ describe("Clover", () => {
     }
   });
 
+  it("handles invalid command", async () => {
+    const tests = [
+      {
+        validations: [
+          {
+            command: "fakeExecutable fakeArg"
+          }
+        ]
+      }
+    ];
+    await expect(runInternal(tests)).rejects.toEqual(new Error("Failed 1 of 1 tests"));
+    allTestsFailed(tests);
+  });
+
+  it("skips subsequent commands if one fails", async () => {
+    const tests: CloverTest[] = [
+      {
+        validations: [
+          {
+            command: "fakeExecutable fakeArg"
+          },
+          {
+            command: "fakeExecutable2 fakeArg2"
+          }
+        ]
+      }
+    ];
+    await expect(runInternal(tests)).rejects.toEqual(new Error("Failed 1 of 2 tests"));
+    const results = getDefaultResults(tests);
+
+    expect(results).toBeDefined();
+
+    if(results) {
+      expect(results["fakeExecutable fakeArg"].run).toBe(true);
+      expect(results["fakeExecutable fakeArg"].passed).toBe(false);
+  
+      expect(results["fakeExecutable2 fakeArg2"].run).toBe(false);
+      expect(results["fakeExecutable2 fakeArg2"].passed).toBe(false);
+    }
+  });
+
+  function getDefaultResults(tests: CloverTest[]) {
+    const results = tests[0].results;
+    if (results) {
+      return results["."];
+    }
+  }
+
   function allTestsAssertion(tests: CloverTest[], assertion: (result: TestResult) => void) {
     tests.forEach((test) => {
       const results = test.results as ResultSet;
@@ -200,4 +258,13 @@ describe("Clover", () => {
       expect(passed).toBe(true);
     });
   }
-})
+
+  function allTestsFailed(tests: CloverTest[]) {
+    allTestsAssertion(tests, (testResult) => {
+      const { run, passed, failureMessage } = testResult;
+      expect(run).toBe(true);
+      expect(failureMessage).toBeDefined();
+      expect(passed).toBe(false);
+    });
+  }
+});
