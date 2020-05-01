@@ -3,7 +3,7 @@ import { Logger } from "./logger";
 import { ResultSet, TestResult, TestState, TestSummary } from "./models";
 
 export class Summarizers {
-  public static brief(results: ResultSet) {
+  public static brief(results: ResultSet, name?: string) {
     Summarizers.printSummary(results, (result, state) => {
       const { directory, command, failureMessage } = result;
       const dirName = path.normalize(directory)
@@ -16,7 +16,7 @@ export class Summarizers {
     });
   }
 
-  public static verbose(results: ResultSet) {
+  public static verbose(results: ResultSet, name?: string) {
     Summarizers.printSummary(results, (result, state) => {
       const { directory, command, failureMessage, stdout, silent } = result;
       const dirName = path.normalize(directory)
@@ -36,7 +36,10 @@ export class Summarizers {
 
   }
 
-  private static printSummary(results: ResultSet, stringify: (result: TestResult, state: TestState) => string) {
+  private static printSummary(
+      results: ResultSet,
+      stringify: (result: TestResult, state: TestState) => string,
+      name?: string) {
     const summary = this.getTestSummary(results)
     const {
       passed,
@@ -46,9 +49,25 @@ export class Summarizers {
     Logger.green(passed.map((result) => stringify(result, TestState.PASSED)).join("\n"));
     Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
     Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
+    const p = passed.length;
+    const f = failed.length;
+    const s = skipped.length;
+    const total = p + f + s;
+    const finalMessage = [
+      `TEST RESULTS: ${name || ""}`,
+      `TOTAL: ${total}`,
+      `PASSED: ${p}`,
+      `SKIPPED: ${s}${(s > 0) ? "\n" + skipped.map(this.resultLine).join("\n") : ""}`,
+      `FAILED: ${f}${(f > 0) ? "\n" + failed.map(this.resultLine).join("\n") : ""}`,
+    ].join("\n");
+    Logger.log(finalMessage);
     if (failed.length > 0) {
-      throw new Error(`Failed ${failed.length} of ${passed.length + skipped.length + failed.length} tests`);
+      throw new Error(`Failed ${f} of ${total} tests`);
     }
+  }
+
+  private static resultLine(result: TestResult): string {
+    return `\t${result.directory} - ${result.command}`
   }
   
   /**
