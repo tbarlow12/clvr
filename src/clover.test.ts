@@ -199,7 +199,7 @@ describe("Clover", () => {
         ]
       }
     ];
-    await expect(runInternal(tests)).rejects.toEqual(new Error("Failed 1 of 1 tests"));
+    await expect(runInternal(tests)).rejects.toEqual(expect.any(Error));
     allTestsFailed(tests);
   });
 
@@ -216,7 +216,7 @@ describe("Clover", () => {
         ]
       }
     ];
-    await expect(runInternal(tests)).rejects.toEqual(new Error("Failed 1 of 2 tests"));
+    await expect(runInternal(tests)).rejects.toEqual(expect.any(Error));
     const results = getDefaultResults(tests);
 
     expect(results).toBeDefined();

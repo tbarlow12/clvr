@@ -18,15 +18,15 @@ export function run(tests: CloverTest[]) {
  * @param tests Array of clover tests to run
  * @param summarizer 
  */
-export async function runInternal(tests: CloverTest[], summarizer: (results: ResultSet) => void = Summarizers.verbose): Promise<CloverTest[]> {
+export async function runInternal(tests: CloverTest[], summarizer: (results: ResultSet, name?: string) => void = Summarizers.verbose): Promise<CloverTest[]> {
   for (const test of tests) {
     const { validations, parameters } = test;
     const directories = test.directories || ["."]
     test.results = Initializer.resultSet(directories as string[], validations);
     try {
       const results = await execute(validations, directories, parameters);
-      test.results = results; 
-      summarizer(results);
+      test.results = results;
+      summarizer(results, test.name);
     } catch (err) {
       Logger.error(err);
       return Promise.reject(err);
