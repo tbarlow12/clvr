@@ -1,6 +1,6 @@
 # 🍀 Clover - The Command-Line Validator
 
-[![codecov](https://codecov.io/gh/tbarlow12/clvr/branch/master/graph/badge.svg)](https://codecov.io/gh/tbarlow12/clvr)
+[![codecov](https://codecov.io/gh/tbarlow12/clvr/branch/master/graph/badge.svg)](https://codecov.io/gh/tbarlow12/clvr) [![npm version](https://badge.fury.io/js/clvr.svg)](https://badge.fury.io/js/clvr) ![Build, Test and Coverage](https://github.com/tbarlow12/clvr/workflows/Build,%20Test%20and%20Coverage/badge.svg)
 
 Clover is a simple way to validate the results of your command-line application. The test format is a JSON object that makes assertions based on the results of the executed command.
 
