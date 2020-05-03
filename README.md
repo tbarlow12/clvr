@@ -1,6 +1,6 @@
 # 🍀 Clover - The Command-Line Validator
 
-[![codecov](https://codecov.io/gh/tbarlow12/clvr/branch/master/graph/badge.svg)](https://codecov.io/gh/tbarlow12/clvr) [![npm version](https://badge.fury.io/js/clvr.svg)](https://badge.fury.io/js/clvr) ![Build, Test and Coverage](https://github.com/tbarlow12/clvr/workflows/Build,%20Test%20and%20Coverage/badge.svg)
+[![codecov](https://codecov.io/gh/tbarlow12/clvr/branch/master/graph/badge.svg)](https://codecov.io/gh/tbarlow12/clvr) [![npm version](https://badge.fury.io/js/clvr.svg)](https://badge.fury.io/js/clvr) [![Build, Test and Coverage](https://github.com/tbarlow12/clvr/workflows/Build,%20Test%20and%20Coverage/badge.svg)](https://github.com/tbarlow12/clvr/actions?query=workflow%3A%22Build%2C+Test+and+Coverage%22)
 
 Clover is a simple way to validate the results of your command-line application. The test format is a JSON object that makes assertions based on the results of the executed command.
 
@@ -22,7 +22,7 @@ You can make assertions against `stdout`, `stderr`, files, or even a custom pred
 
 ## About Clover
 
-Clover was born out of a need to validate the output and results of the [Azure Functions plugin](https://github.com/serverless/serverless-azure-functions) to the [Serverless Framework](https://github.com/serverless/serverless). There was no real integration tests being run, and we needed a simple way to make sure that the plugin was still able to perform its core operations across many different configurations. I named it Clover because it was a **C**ommand-**L**ine **V**alidato**r**, and it just so happened that the first beta package was released on St. Patrick's Day, 2020.
+Clover was born out of a need to validate the output and results of the [Azure Functions plugin](https://github.com/serverless/serverless-azure-functions) to the [Serverless Framework](https://github.com/serverless/serverless). There were no real integration tests being run, and we needed a simple way to make sure that the plugin was still able to perform its core operations across many different configurations. I named it Clover because it was a **C**ommand-**L**ine **V**alidato**r**, and it just so happened that the first beta package was released on St. Patrick's Day, 2020.
 
 ### How It Works
 
@@ -65,7 +65,30 @@ export interface CloverTest {
 }
 ```
 
-As you can see, the only required attribute in a `CloverTest` is `validations`, which is an array of type `CommandValidation`. These contain the commands to execute as well as all assertions to make as a result of the command being run.
+As you can see, the only required attribute in a `CloverTest` is `validations`, which is an array of type `CommandValidation`. These contain the commands to execute as well as all assertions to make as a result of the command being run. Here is the structure of the `CommandValidation` object:
+
+```typescript
+/**
+ * Command to validate. Used as main configuration when defining
+ * commands that need to be run and what their expected behavior is.
+ */
+export interface CommandValidation {
+  /** Full string (including arguments) of command to run */
+  command: string;
+  /** Object that describes expected output to stdout */
+  stdout?: ContentValidation;
+  /** Object that describes expected output to stderr */
+  stderr?: ContentValidation;
+  /** Object that describes expected state of files in directory after test is run */
+  files?: FileStructureValidation;
+  /** Custom predicate for command result */
+  custom?: {(parameters: InterpolateParameters, directory: string, stdout: string, stderr: string): void};
+  /** Predicate condition that, if false, prevents the step from being run */
+  condition?: {(directory: string): boolean};
+  /** Does not print stdout from command (will still print stderr) */
+  silent?: boolean
+}
+```
 
 ### Types of Assertions
 
@@ -88,6 +111,8 @@ Each command can make 0 or many assertions. Here are the types of assertions tha
   - `shouldNotContain` - `string[]` - The file content should contain NONE of these strings.
   - `isEmpty` - `boolean` - Specifies whether or not the file should exist
 - `custom` - `(parameters: InterpolateParameters, stdout: string, stderr: string) => void` - Create custom function to evaluate output. For an error to be caught by results, `throw new AssertionError({message: "<your-message>"});`
+
+Helpful tip: things like `npm install` commands where you don't really care about the output, add `silent: true` to the validation object. 
 
 ## Run Your First Test
 1. `npm install clvr`
@@ -285,7 +310,10 @@ run([
     validations: [
       {
         command: "cat ${fileName}",
-        custom: (parameters, stdout, stderr) => {
+        custom: (parameters, directory, stdout, stderr) => {
+          if (directory === "dir1") {
+            console.log("Got to dir1 directory");
+          }
           if (stdout !== parameters["value"] + "\n") {
             throw new AssertionError({message: "File did not have correct value"});
           }

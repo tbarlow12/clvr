@@ -378,7 +378,8 @@ describe("Validator", () => {
     it("expect to pass", () => {
       const validation: CommandValidation = {
         command,
-        custom: (parameters, stdout, stderr) => {
+        custom: (parameters, directory, stdout, stderr) => {
+          assert.equal(directory, "dirName");
           assert.equal(stdout, `hello ${parameters["param1"]}`);
           assert.equal(stderr, `hello ${parameters["param2"]}`);
         }
@@ -388,14 +389,15 @@ describe("Validator", () => {
         param1: "bruce",
         param2: "clark",
       }
-      Validator.validate(validation, "", "hello bruce", "hello clark", parameters, results);
+      Validator.validate(validation, "dirName", "hello bruce", "hello clark", parameters, results);
       expectPass(results);
     });
 
     it("expect to fail", () => {
       const validation: CommandValidation = {
         command,
-        custom: (parameters, stdout, stderr) => {
+        custom: (parameters, directory, stdout, stderr) => {
+          assert.equal(directory, "dirName");
           assert.equal(stdout, `hello ${parameters["param1"]}`);
           assert.equal(stderr, `hello ${parameters["param2"]}`);
         }
@@ -405,7 +407,7 @@ describe("Validator", () => {
         param1: "bruce",
         param2: "clark",
       }
-      Validator.validate(validation, "", "hello clark", "hello bruce", parameters, results);
+      Validator.validate(validation, "dirName", "hello clark", "hello bruce", parameters, results);
       expectFail(results);
     });
   });
