@@ -22,7 +22,7 @@ export class Validator {
       this.validateOutput(validation.stdout, stdout, parameters);
       this.validateOutput(validation.stderr, stderr, parameters);
       this.validateFiles(validation.files, directory, parameters);
-      this.validateCustom(validation.custom, stdout, stderr, parameters);
+      this.validateCustom(validation.custom, directory, stdout, stderr, parameters);
       passed = true;
     } catch (err) {
       if (err instanceof AssertionError) {
@@ -116,13 +116,14 @@ export class Validator {
   }
 
   private static validateCustom (
-    custom: {(parameters: InterpolateParameters, stdout: string, stderr: string): void} | undefined,
+    custom: {(parameters: InterpolateParameters, directory: string, stdout: string, stderr: string): void} | undefined,
+    directory: string,
     stdout: string,
     stderr: string,
     parameters: InterpolateParameters) {
     if (!custom) {
       return;
     }
-    return custom(parameters, stdout, stderr);
+    return custom(parameters, directory, stdout, stderr);
   }
 }
