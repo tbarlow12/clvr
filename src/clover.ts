@@ -1,9 +1,9 @@
 import { Initializer } from "./initializer";
-import { CommandValidation, Parameters, ResultSet, CloverTest } from "./models";
-import { runCommandChain } from "./runner";
-import { Utils } from "./utils";
-import { Summarizers } from "./summarizers";
 import { Logger } from "./logger";
+import { CloverTest, CommandValidation, Parameters, ResultSet } from "./models";
+import { runCommandChain } from "./runner";
+import { Summarizers } from "./summarizers";
+import { Utils } from "./utils";
 
 /**
  * Run clover tests
@@ -22,6 +22,8 @@ export async function runInternal(tests: CloverTest[], summarizer: (results: Res
   for (const test of tests) {
     const { validations, parameters } = test;
     const directories = test.directories || ["."]
+
+    // Initialize result set with all commands for each directory
     test.results = Initializer.resultSet(directories as string[], validations);
     try {
       const results = await execute(validations, directories, parameters);

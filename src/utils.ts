@@ -1,8 +1,8 @@
 import { readdirSync } from "fs";
 import { sep } from "path";
-import { InterpolateParameters } from "./models";
 import { spawn } from "cross-spawn";
 import { normalize } from "path"
+import { InterpolateParameters } from "./models/parameters";
 
 export class Utils {
 

@@ -1,7 +1,9 @@
 import { Utils } from "./utils";
-import { DirectoryResultSet, CommandValidation, InterpolateParameters } from "./models";
+import { CommandValidation } from "./models";
 import { Validator } from "./validator";
 import { Logger } from "./logger";
+import { DirectoryResultSet } from "./models/results";
+import { InterpolateParameters } from "./models/parameters";
 
 export async function runCommandChain(
   directory: string,
@@ -10,14 +12,15 @@ export async function runCommandChain(
   parameters: InterpolateParameters,
   onFinish: (results: DirectoryResultSet) => void): Promise<any> {
   
-  return new Promise((resolve, reject) => {
+  return new Promise(() => {
     if (validations.length === 0) {
+      // Reached the end of the chain
       onFinish(results);
       return;
     }
     const validation = validations[0];
 
-    // If condition predicate is defined and returns false, the step is skipped
+    // If condition predicate is defined and returns false, the command is skipped
     if (validation.condition && !validation.condition(directory)) {
       return runCommandChain(directory, validations.slice(1, validations.length), results, parameters, onFinish);
     }

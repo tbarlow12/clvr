@@ -1,6 +1,7 @@
-import { runInternal } from "./clover";
-import { CloverTest, ResultSet, TestResult } from "./models";
 import fs from "fs";
+import { runInternal } from "./clover";
+import { CloverTest } from "./models/clover";
+import { ResultSet, TestResult } from "./models/results";
 
 jest.mock("./logger");
 

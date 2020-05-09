@@ -1,6 +1,8 @@
-import { Validator } from "./validator"
-import { CommandValidation, ResultSet, DirectoryResultSet, InterpolateParameters } from "./models";
 import assert from "assert";
+import { CommandValidation } from "./models";
+import { InterpolateParameters } from "./models/parameters";
+import { DirectoryResultSet } from "./models/results";
+import { Validator } from "./validator";
 
 describe("Validator", () => {
   const command = "stub command";
