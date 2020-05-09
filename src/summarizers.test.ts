@@ -1,5 +1,5 @@
-import { ResultSet } from "./models"
-import { Summarizers } from "./summarizers"
+import { ResultSet } from "./models/results";
+import { Summarizers } from "./summarizers";
 
 jest.mock("./logger");
 
