@@ -1,14 +1,10 @@
-export {
-  run,
-} from "./clover"
+import { run } from "./clover"
 
-export {
-  Summarizers
-} from "./summarizers"
+export default run;
 
 export {
   CloverTest,
-  InterpolateParameters,
+  Parameters,
   ResultSet,
   CommandValidation
 } from "./models"

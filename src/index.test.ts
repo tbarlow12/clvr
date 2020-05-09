@@ -1,12 +1,8 @@
-import * as CloverIndex from "./"
+import clvr from "./";
+import { run } from "./clover"
 
 describe("Index", () => {
   it("contains exported items", () => {
-    const {
-      Summarizers,
-      run
-    } = CloverIndex
-    expect(Summarizers).toBeDefined();
-    expect(run).toBeDefined();
+    expect(clvr).toEqual(run);
   });
 });
