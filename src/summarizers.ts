@@ -1,6 +1,6 @@
 import path from "path";
 import { Logger } from "./logger";
-import { ResultSet, TestResult, TestState, TestSummary } from "./models";
+import { ResultSet, TestResult, TestState, TestSummary } from "./models/results";
 
 export class Summarizers {
   public static brief(results: ResultSet, name?: string) {
