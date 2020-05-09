@@ -1,6 +1,9 @@
 import { Initializer } from "./initializer";
 import { Logger } from "./logger";
-import { CloverTest, CommandValidation, Parameters, ResultSet } from "./models";
+import { CloverTest } from "./models/clover";
+import { Parameters } from "./models/parameters";
+import { ResultSet } from "./models/results";
+import { CommandValidation } from "./models/validation";
 import { runCommandChain } from "./runner";
 import { Summarizers } from "./summarizers";
 import { Utils } from "./utils";

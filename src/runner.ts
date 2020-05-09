@@ -1,9 +1,9 @@
-import { Utils } from "./utils";
-import { CommandValidation } from "./models";
-import { Validator } from "./validator";
 import { Logger } from "./logger";
-import { DirectoryResultSet } from "./models/results";
 import { InterpolateParameters } from "./models/parameters";
+import { DirectoryResultSet } from "./models/results";
+import { CommandValidation } from "./models/validation";
+import { Utils } from "./utils";
+import { Validator } from "./validator";
 
 export async function runCommandChain(
   directory: string,
