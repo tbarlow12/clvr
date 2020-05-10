@@ -11,6 +11,7 @@ describe("Utils", () => {
       .toEqual("dir3");
     expect(Utils.getDirName("dir1/dir2/dir3")).toEqual("dir3");
     expect(Utils.getDirName("dir1")).toEqual("dir1");
+    expect(Utils.getDirName("dir1/")).toEqual("dir1");
   });
 
   it("containsVariable true", () => {
