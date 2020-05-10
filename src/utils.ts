@@ -19,7 +19,7 @@ export class Utils {
     const lastSlashIndex = directory.lastIndexOf(sep);
     return (lastSlashIndex < directory.length - 1) 
       ? directory.substring(lastSlashIndex + 1)
-      : directory;
+      : directory.substring(0, directory.length - 1);
   }
 
   public static containsVariable(original: string): boolean {
