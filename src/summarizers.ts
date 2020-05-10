@@ -32,10 +32,6 @@ export class Summarizers {
     });
   }
 
-  public static markdownTable(results: ResultSet) {
-
-  }
-
   private static printSummary(
       results: ResultSet,
       stringify: (result: TestResult, state: TestState) => string,
