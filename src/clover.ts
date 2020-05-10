@@ -67,10 +67,6 @@ function execute(
             // TODO finish timer here
             resolve(results);
           }
-        })
-        .catch((reason) => {
-          // TODO finish timer here
-          reject(reason)
         });
     });
   });    

@@ -414,6 +414,23 @@ describe("Validator", () => {
     });
   });
 
+  describe("exceptions", () => {
+    it("throws exception when both shouldBeExactly and shouldContain specified", () => {
+      const validation: CommandValidation = {
+        command,
+        stdout: {
+          shouldBeExactly: "hello",
+          shouldContain: [
+            "hello"
+          ]
+        }
+      }
+      const results = initial();
+      expect(() => Validator.validate(validation, "", "hello", "", {}, results))
+        .toThrowError("Can't specify both `shouldBeExactly` and `shouldContain`");
+    });
+  });
+
   function expectPass(results: DirectoryResultSet) {
     const { run, passed } = results[command];
     expect(run).toBe(true);

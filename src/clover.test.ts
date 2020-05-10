@@ -1,12 +1,11 @@
 import fs from "fs";
-import { runInternal } from "./clover";
+import { runInternal, run } from "./clover";
 import { CloverTest } from "./models/clover";
 import { ResultSet, TestResult } from "./models/results";
 
 jest.mock("./logger");
 
 describe("Clover", () => {
-
   it("runs a single test", async () => {
     const tests: CloverTest[] = [
       {
@@ -229,6 +228,21 @@ describe("Clover", () => {
       expect(results["fakeExecutable2 fakeArg2"].run).toBe(false);
       expect(results["fakeExecutable2 fakeArg2"].passed).toBe(false);
     }
+  });
+
+  it("external run is synchronous", () => {
+    run([
+      {
+        validations: [
+          {
+            command: "echo hello",
+            stdout: {
+              shouldBeExactly: "hello\n",
+            }
+          }
+        ]
+      }
+    ]);
   });
 
   function getDefaultResults(tests: CloverTest[]) {

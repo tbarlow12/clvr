@@ -30,7 +30,7 @@ export class Validator {
       if (err instanceof AssertionError) {
         failureMessage = err.message;
       } else {
-        failureMessage = JSON.stringify(err, null, 2);
+        throw err;
       }
     }
 

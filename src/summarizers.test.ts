@@ -27,6 +27,7 @@ describe("Summarizers", () => {
           directory: "directory",
           command: "ls",
           passed: true,
+          failureMessage: "This test failed",
           run: true,
           stdout: "Hello",
           stderr: "",
