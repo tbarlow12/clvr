@@ -1,4 +1,4 @@
-import { run } from "./clover"
+import { run } from "./clover";
 
 export default run;
 
@@ -8,6 +8,7 @@ export {
 
 export {
   Parameters,
+  InterpolateParameters,
 } from "./models/parameters"
 
 export {

@@ -62,4 +62,19 @@ describe("Logger", () => {
     expect(chalk.red).toBeCalledWith("hello", []);
     expect(console.error).toBeCalledWith("hello");
   });
+
+  it("logs ascii art", () => {
+    const chalkResult = "chalkResult";
+    const chalkFn = jest.fn(() => chalkResult)
+    Logger.asciiArt("hello", chalkFn);
+    expect(chalkFn).toBeCalled();
+    expect(console.log).toBeCalledWith(chalkResult);
+  });
+
+  it("pretty prints", () => {
+    const item = { value: 1, otherValue: 2 }
+    const expected = JSON.stringify(item, null, 2);
+    Logger.prettyPrint(item);
+    expect(console.log).toBeCalledWith(expected);
+  });
 });
