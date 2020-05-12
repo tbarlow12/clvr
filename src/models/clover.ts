@@ -18,11 +18,6 @@ export interface CloverTest {
    */
   name?: string;
   /**
-   * Directories in which to execute the commands.
-   * Relative to the current working directory.
-   */
-  directories?: string[];
-  /**
    * String parameters for string interpolation in commands, 
    * paths or assertions. Broken down by directory.
    */

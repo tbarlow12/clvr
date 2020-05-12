@@ -2,7 +2,8 @@ module.exports = {
   "collectCoverageFrom": [
     "src/**/*.{js,jsx,ts,tsx}",
     "!src/**/*.d.ts",
-    "!src/test/*.ts"
+    "!src/test/*.ts",
+    "!src/cli.ts"
   ],
   "testEnvironment": "node",
   "transform": {

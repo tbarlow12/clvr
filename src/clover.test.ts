@@ -1,11 +1,34 @@
 import fs from "fs";
-import { runInternal, run } from "./clover";
+import { run, runInternal } from "./clover";
 import { CloverTest } from "./models/clover";
 import { ResultSet, TestResult } from "./models/results";
+
+jest.mock("./program");
+import { Program } from "./program";
 
 jest.mock("./logger");
 
 describe("Clover", () => {
+  
+  beforeAll(() => {
+    Program.get = jest.fn(() => { return {} }) as any;
+  });
+
+  it("runs a test through main entry point", async () => {
+    const test: CloverTest = {
+      validations: [
+        {
+          command: "echo hello",
+          stdout: {
+            shouldBeExactly: "hello\n",
+          }
+        }
+      ]
+    };
+    await run(test);
+    allTestsPassed([ test ]);
+  });
+
   it("runs a single test", async () => {
     const tests: CloverTest[] = [
       {
@@ -19,7 +42,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await runInternal(tests);
+    await runInternal(tests, ["."]);
     tests.forEach((test) => {
       const results = test.results as ResultSet;
       expect(results).toBeDefined();
@@ -51,7 +74,7 @@ describe("Clover", () => {
           }
         ]
       }
-    ]);
+    ], ["."]);
     expect(fs.existsSync(fileName)).toBe(true);
     await runInternal([
       {
@@ -61,7 +84,7 @@ describe("Clover", () => {
           }
         ]
       }
-    ]);
+    ], ["."]);
     expect(fs.existsSync(fileName)).toBe(false);
   });
 
@@ -101,7 +124,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await runInternal(tests);
+    await runInternal(tests, ["."]);
     allTestsPassed(tests);
   });
 
@@ -115,7 +138,7 @@ describe("Clover", () => {
         ]
       }
     ]
-    await expect(runInternal(tests)).rejects.toEqual(new Error("Failed 1 of 1 tests"));
+    await expect(runInternal(tests, ["."])).rejects.toEqual(new Error("Failed 1 of 1 tests"));
   });
 
   it("does not run empty directory set", async () => {
@@ -129,10 +152,9 @@ describe("Clover", () => {
             }
           }
         ],
-        directories: []
       }
     ]
-    await expect(runInternal(tests)).rejects.toEqual(expect.any(String));
+    await expect(runInternal(tests, [])).rejects.toEqual(expect.any(String));
     expect(tests).toHaveLength(1);
     expect(tests[0].results).toEqual({});
   });
@@ -149,7 +171,6 @@ describe("Clover", () => {
             }
           }
         ],
-        directories: [ "test/dir1", "test/dir2" ],
         parameters: {
           dir1: {
             fileName: "hello.txt",
@@ -162,7 +183,7 @@ describe("Clover", () => {
         }
       }
     ]
-    await runInternal(tests);
+    await runInternal(tests, [ "test/dir1", "test/dir2" ]);
 
     const { results } = tests[0];
 
@@ -199,7 +220,7 @@ describe("Clover", () => {
         ]
       }
     ];
-    await expect(runInternal(tests)).rejects.toEqual(expect.any(Error));
+    await expect(runInternal(tests, ["."])).rejects.toEqual(expect.any(Error));
     allTestsFailed(tests);
   });
 
@@ -216,7 +237,7 @@ describe("Clover", () => {
         ]
       }
     ];
-    await expect(runInternal(tests)).rejects.toEqual(expect.any(Error));
+    await expect(runInternal(tests, ["."])).rejects.toEqual(expect.any(Error));
     const results = getDefaultResults(tests);
 
     expect(results).toBeDefined();
@@ -230,20 +251,6 @@ describe("Clover", () => {
     }
   });
 
-  it("external run is synchronous", () => {
-    run([
-      {
-        validations: [
-          {
-            command: "echo hello",
-            stdout: {
-              shouldBeExactly: "hello\n",
-            }
-          }
-        ]
-      }
-    ]);
-  });
 
   function getDefaultResults(tests: CloverTest[]) {
     const results = tests[0].results;

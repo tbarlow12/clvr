@@ -5,6 +5,7 @@ import { CommandValidation } from "./models/validation";
 import { Utils } from "./utils";
 import { Validator } from "./validator";
 
+
 export async function runCommandChain(
   directory: string,
   validations: CommandValidation[],
@@ -75,3 +76,4 @@ export function errorMessage(
   }
   return `ERROR during '${command}' in '${directory}':\n\t${message}`;
 }
+

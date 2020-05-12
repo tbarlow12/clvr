@@ -1,9 +1,12 @@
+import glob from "glob";
+import { getConfig } from "./config";
 import { Initializer } from "./initializer";
 import { Logger } from "./logger";
 import { CloverTest } from "./models/clover";
 import { Parameters } from "./models/parameters";
 import { ResultSet } from "./models/results";
 import { CommandValidation } from "./models/validation";
+import { Program } from "./program";
 import { runCommandChain } from "./runner";
 import { Summarizers } from "./summarizers";
 import { Utils } from "./utils";
@@ -12,8 +15,14 @@ import { Utils } from "./utils";
  * Run clover tests
  * @param tests Array of clover tests to run
  */
-export function run(tests: CloverTest[]) {
-  runInternal(tests).catch(() => { process.exit(1); });
+export function run(test: CloverTest) {
+  const program = Program.get();
+  const config = getConfig(program.config);
+  const directoryGlob = program.directories || config.directories;
+  const directories = (directoryGlob)
+    ? glob.sync(directoryGlob)
+    : ["."]
+  return runInternal([ test ], directories).catch(() => { process.exit(1); });
 }
 
 /**
@@ -21,10 +30,13 @@ export function run(tests: CloverTest[]) {
  * @param tests Array of clover tests to run
  * @param summarizer 
  */
-export async function runInternal(tests: CloverTest[], summarizer: (results: ResultSet, name?: string) => void = Summarizers.verbose): Promise<CloverTest[]> {
+export async function runInternal(
+    tests: CloverTest[],
+    directories: string[],
+    summarizer: (results: ResultSet, name?: string) => void = Summarizers.verbose
+  ): Promise<CloverTest[]> {
   for (const test of tests) {
     const { validations, parameters } = test;
-    const directories = test.directories || ["."]
 
     // Initialize result set with all commands for each directory
     test.results = Initializer.resultSet(directories as string[], validations);
@@ -67,7 +79,8 @@ function execute(
             // TODO finish timer here
             resolve(results);
           }
-        });
+        })
+        .catch((reason) => reject(reason));
     });
   });    
 }
