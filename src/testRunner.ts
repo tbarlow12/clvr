@@ -3,6 +3,7 @@ import { run } from "./clover";
 import { constants } from "./constants";
 import { CloverTest } from "./models/clover";
 import { Utils } from "./utils";
+import { Logger } from "./logger";
 
 export async function runTestFiles(testFiles: string[]) {
   if (testFiles.length === 0) {
@@ -21,11 +22,15 @@ export async function runTestFiles(testFiles: string[]) {
   } else {
     throw new Error(`Invalid file: ${testFile}`);
   }
+  
   Utils.createSpawn(
     process.cwd(),
     executor,
     [ testFile ],
     () => { runTestFiles(testFiles.slice(1, testFiles.length)); },
-    () => { process.exit(1); },
+    () => { 
+      Logger.error(`Test ${testFile} execution failed`);
+      process.exit(1);
+    },
     true); 
 }

@@ -6,7 +6,7 @@ import { CloverTest } from "./models/clover";
 import { Parameters } from "./models/parameters";
 import { ResultSet } from "./models/results";
 import { CommandValidation } from "./models/validation";
-import { program } from "./program";
+import { Program } from "./program";
 import { runCommandChain } from "./runner";
 import { Summarizers } from "./summarizers";
 import { Utils } from "./utils";
@@ -16,6 +16,7 @@ import { Utils } from "./utils";
  * @param tests Array of clover tests to run
  */
 export function run(test: CloverTest) {
+  const program = Program.get();
   const config = getConfig(program.config);
   const directoryGlob = program.directories || config.directories;
   const directories = (directoryGlob)

@@ -3,9 +3,17 @@ import { run, runInternal } from "./clover";
 import { CloverTest } from "./models/clover";
 import { ResultSet, TestResult } from "./models/results";
 
+jest.mock("./program");
+import { Program } from "./program";
+
 jest.mock("./logger");
 
 describe("Clover", () => {
+  
+  beforeAll(() => {
+    Program.get = jest.fn(() => { return {} }) as any;
+  });
+
   it("runs a test through main entry point", async () => {
     const test: CloverTest = {
       validations: [
