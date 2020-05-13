@@ -1,6 +1,7 @@
 import path from "path";
 import { Logger } from "./logger";
 import { ResultSet, TestResult, TestState, TestSummary } from "./models/results";
+import { Utils } from "./utils";
 
 export class Summarizers {
   public static brief(results: ResultSet, name?: string) {
@@ -19,8 +20,7 @@ export class Summarizers {
   public static verbose(results: ResultSet, name?: string) {
     Summarizers.printSummary(results, (result, state) => {
       const { directory, command, failureMessage, stdout, silent } = result;
-      const dirName = path.normalize(directory)
-        .substring(directory.lastIndexOf(path.sep) + 1);
+      const dirName = Utils.getDirName(directory);
       let message = `${state} - ${dirName} - ${command}`;
       if (failureMessage) {
         message += ` - ${failureMessage}`;
