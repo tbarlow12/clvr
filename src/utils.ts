@@ -17,10 +17,11 @@ export class Utils {
   
   public static getDirName(directory: string) {
     directory = normalize(directory);
+    if (directory.endsWith(sep)) {
+      directory = directory.substring(0, directory.length - 1);
+    }
     const lastSlashIndex = directory.lastIndexOf(sep);
-    return (lastSlashIndex < directory.length - 1) 
-      ? directory.substring(lastSlashIndex + 1)
-      : directory.substring(0, directory.length - 1);
+    return directory.substring(lastSlashIndex + 1);
   }
 
   public static containsVariable(original: string): boolean {
