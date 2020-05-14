@@ -8,6 +8,4 @@ Logger.asciiArt("clvr", chalk.greenBright);
 const config = new Config();
 const testFiles = config.getTests();
 Logger.log(`Running tests: ${testFiles.join(",")}`);
-const directories = config.getDirectories();
-Logger.log(`Against directories: ${directories.join(",")}`)
 runTestFiles(testFiles);

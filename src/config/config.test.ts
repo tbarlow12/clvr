@@ -40,11 +40,19 @@ describe("Config", () => {
   it("gets directories with a filter", () => {
     Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
     Program.prototype.getDirectories = jest.fn(() => "dir1") as any;
-
     const config = new Config();
     const directories = config.getDirectories();
     expect(directories).toEqual([
       join("test", "directories", "dir1"),
     ]);
+  });
+
+  it("returns current directory if no parent or filter provided", () => {
+    Program.prototype.getConfig = jest.fn(() => "fake.config.json") as any;
+    Program.prototype.getParent = jest.fn(() => undefined);
+    Program.prototype.getDirectories = jest.fn(() => undefined);
+    const config = new Config();
+    const directories = config.getDirectories();
+    expect(directories).toEqual(["."]);
   });
 });
