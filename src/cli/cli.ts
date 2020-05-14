@@ -2,9 +2,9 @@
 import chalk from "chalk";
 import glob from "glob";
 import { getConfig } from "./config";
-import { Logger } from "./logger";
+import { Logger } from "../utils/logger";
 import { Program } from "./program";
-import { runTestFiles } from "./testRunner";
+import { runTestFiles } from "../runner/testRunner";
 
 Logger.asciiArt("clvr", chalk.greenBright);
 const program = Program.get();

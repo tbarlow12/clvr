@@ -1,5 +1,5 @@
 import commander from "commander";
-const packageJson = require("../package.json");
+const packageJson = require("../../package.json");
 
 export class Program {
   public static get() {

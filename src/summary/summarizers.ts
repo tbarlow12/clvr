@@ -1,7 +1,7 @@
 import path from "path";
-import { Logger } from "./logger";
-import { ResultSet, TestResult, TestState, TestSummary } from "./models/results";
-import { Utils } from "./utils";
+import { Logger } from "../utils/logger";
+import { ResultSet, TestResult, TestState, TestSummary } from "../models/results";
+import { Utils } from "../utils/utils";
 
 export class Summarizers {
   public static brief(results: ResultSet, name?: string) {

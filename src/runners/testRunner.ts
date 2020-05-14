@@ -1,9 +1,9 @@
 import path from "path";
-import { run } from "./clover";
-import { constants } from "./constants";
-import { CloverTest } from "./models/clover";
-import { Utils } from "./utils";
-import { Logger } from "./logger";
+import { run } from "../runner/clover";
+import { constants } from "../utils/constants";
+import { CloverTest } from "../models/clover";
+import { Utils } from "../utils/utils";
+import { Logger } from "../utils/logger";
 
 export async function runTestFiles(testFiles: string[]) {
   if (testFiles.length === 0) {

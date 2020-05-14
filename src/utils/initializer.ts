@@ -1,5 +1,5 @@
-import { ResultSet } from "./models/results";
-import { CommandValidation } from "./models/validation";
+import { ResultSet } from "../models/results";
+import { CommandValidation } from "../models/validation";
 import { Utils } from "./utils";
 
 export class Initializer {

@@ -1,7 +1,7 @@
-import { ResultSet } from "./models/results";
+import { ResultSet } from "../models/results";
 import { Summarizers } from "./summarizers";
 
-jest.mock("./logger");
+jest.mock("../utils/logger");
 
 describe("Summarizers", () => {
   let failing: ResultSet;

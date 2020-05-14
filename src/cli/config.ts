@@ -2,13 +2,12 @@ import path from "path";
 import fs from "fs";
 
 export interface CloverConfig {
-  parent: string;
+  parent?: string;
   testPattern: string;
   runAsync: boolean;
 }
 
 const defaultConfig: CloverConfig = {
-  parent: ".",
   testPattern: "**/*.clvr.(ts|js)",
   runAsync: false,
 }

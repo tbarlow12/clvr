@@ -2,7 +2,7 @@ import { readdirSync } from "fs";
 import { sep, join } from "path";
 import { spawn } from "cross-spawn";
 import { normalize } from "path"
-import { InterpolateParameters } from "./models/parameters";
+import { InterpolateParameters } from "../models/parameters";
 import { Logger } from "./logger";
 
 export class Utils {
@@ -79,29 +79,4 @@ export class Utils {
     });
     return childProcess
   }
-
-  // public static spawnInherit(command: string, args: string[]): Promise<void> {
-  //   return new Promise((resolve, reject) => {
-  //     const childProcess = spawn(command, args, {
-  //       stdio: "inherit"
-  //     });
-
-  //     childProcess.on("close", (code) => {
-  //       if (code === 0) {
-
-  //       }
-  //     });
-  
-  //     childProcess.on("exit", (code, signal) => {
-  //       if (code === 0) {
-  //         resolve();
-  //       } else {
-  //         // const message = `Exited command '${command}' with error code ${code}`
-  //         // Logger.error(message);
-  //         // reject(message);
-  //         reject();
-  //       }
-  //     });
-  //   });
-  // }
 }

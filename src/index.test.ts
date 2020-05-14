@@ -1,5 +1,5 @@
 import clvr from "./";
-import { run } from "./clover"
+import { run } from "./runner/clover"
 
 describe("Index", () => {
   it("contains exported items", () => {

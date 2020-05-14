@@ -1,4 +1,4 @@
-import { run } from "./clover";
+import { run } from "./runner/clover";
 
 export default run;
 

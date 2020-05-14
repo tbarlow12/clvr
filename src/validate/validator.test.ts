@@ -1,7 +1,7 @@
 import assert from "assert";
-import { InterpolateParameters } from "./models/parameters";
-import { DirectoryResultSet } from "./models/results";
-import { CommandValidation } from "./models/validation";
+import { InterpolateParameters } from "../models/parameters";
+import { DirectoryResultSet } from "../models/results";
+import { CommandValidation } from "../models/validation";
 import { Validator } from "./validator";
 
 describe("Validator", () => {

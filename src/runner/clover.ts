@@ -1,14 +1,14 @@
-import { getConfig } from "./config";
-import { Initializer } from "./initializer";
-import { Logger } from "./logger";
-import { CloverTest } from "./models/clover";
-import { Parameters } from "./models/parameters";
-import { ResultSet } from "./models/results";
-import { CommandValidation } from "./models/validation";
-import { Program } from "./program";
+import { getConfig } from "../cli/config";
+import { Initializer } from "../utils/initializer";
+import { Logger } from "../utils/logger";
+import { CloverTest } from "../models/clover";
+import { Parameters } from "../models/parameters";
+import { ResultSet } from "../models/results";
+import { CommandValidation } from "../models/validation";
+import { Program } from "../cli/program";
 import { runCommandChain } from "./runner";
-import { Summarizers } from "./summarizers";
-import { Utils } from "./utils";
+import { Summarizers } from "../summary/summarizers";
+import { Utils } from "../utils/utils";
 
 /**
  * Run clover tests

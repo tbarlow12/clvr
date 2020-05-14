@@ -1,4 +1,4 @@
 {
-  "tests": "**/*.clvr.ts",
-  "directories": "dir*/"
+  "testPattern": "**/*.clvr.ts",
+  "parent": "directories"
 }
