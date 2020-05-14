@@ -12,9 +12,11 @@ You can make assertions against `stdout`, `stderr`, files, or even a custom pred
   - [Table of Contents](#table-of-contents)
   - [About Clover](#about-clover)
     - [How It Works](#how-it-works)
+  - [Getting Started](#getting-started)
+    - [Run Your First Test](#run-your-first-test)
     - [CloverTest](#clovertest)
     - [Types of Assertions](#types-of-assertions)
-  - [Run Your First Test](#run-your-first-test)
+  - [Run Your First Test](#run-your-first-test-1)
   - [Examples](#examples)
     - [Simple Test](#simple-test)
     - [Simple Parameterized Test](#simple-parameterized-test)
@@ -30,9 +32,38 @@ Clover iterates across the different directories and spawns a new process for ea
 
 Clover uses `cross-spawn`, so valid commands can be executed on any operating system.
 
+## Getting Started
+
+This section will be your guide to using Clover within your development process
+
+### Run Your First Test
+
+1. Install clvr
+   ```bash
+   $ npm i clvr
+   ```
+2. Create test file
+   ```javascript
+    // basic.clvr.js
+    const clvr = require("clvr");
+
+    clvr({
+      validations: [
+        {
+          command: "echo hello",
+          stdout: {
+            shouldBeExactly: "hello\n"
+          }
+        }
+      ]
+    });
+   ```
+
+
+
 ### CloverTest
 
-The `run` function takes an array of type `CloverTest`. Here is the structure of that object:
+The default exported function takes an object of type `CloverTest`. Here is the structure of that object:
 
 ```typescript
 export interface CloverTest {
