@@ -76,7 +76,10 @@ export class Config {
         ...config
       };
     } else {
-      Logger.warn(`File ${configFileName} does not exist. Using default config`)
+      if (this.program.getConfig()) {
+        // User specified config file - warn them that it doesn't exist
+        Logger.warn(`File ${configFileName} does not exist. Using default config`)
+      }
       return defaultConfig;  
     }
   }
