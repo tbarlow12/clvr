@@ -8,11 +8,7 @@ jest.mock("../utils/logger");
 
 describe("Config", () => {
   it("gets test files with no filter", () => {
-    Program.get = jest.fn(() => {
-      return {
-        config: "test/clvr.config.json"
-      }
-    }) as any;
+    Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
     const config = new Config();
     const tests = config.getTests();
     expect(tests).toEqual([
@@ -22,12 +18,8 @@ describe("Config", () => {
   });
 
   it("gets test files with a filter", () => {
-    Program.get = jest.fn(() => {
-      return {
-        config: "test/clvr.config.json",
-        tests: "ls"
-      }
-    }) as any;
+    Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
+    Program.prototype.getTests = jest.fn(() => "ls") as any;
     const config = new Config();
     const tests = config.getTests();
     expect(tests).toEqual([
@@ -36,11 +28,7 @@ describe("Config", () => {
   });
 
   it("gets directories with no filter", () => {
-    Program.get = jest.fn(() => {
-      return {
-        config: "test/clvr.config.json"
-      }
-    }) as any;
+    Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
     const config = new Config();
     const directories = config.getDirectories();
     expect(directories).toEqual([
@@ -50,12 +38,9 @@ describe("Config", () => {
   });
 
   it("gets directories with a filter", () => {
-    Program.get = jest.fn(() => {
-      return {
-        config: "test/clvr.config.json",
-        directories: "dir1"
-      }
-    }) as any;
+    Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
+    Program.prototype.getDirectories = jest.fn(() => "dir1") as any;
+
     const config = new Config();
     const directories = config.getDirectories();
     expect(directories).toEqual([

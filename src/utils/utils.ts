@@ -1,9 +1,10 @@
-import { readdirSync } from "fs";
+import { readdirSync, fstat } from "fs";
 import { sep, join } from "path";
 import { spawn } from "cross-spawn";
 import { normalize } from "path"
 import { InterpolateParameters } from "../models/parameters";
 import { Logger } from "./logger";
+import fs from "fs";
 
 export class Utils {
 
@@ -12,6 +13,9 @@ export class Utils {
   private static slashRegex = /\//g
   
   public static getDirectories(source = ".") {
+    if (!fs.existsSync(source)) {
+      throw new Error(`Directory ${source} does not exist`);
+    }
     return readdirSync(source, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => join(source, dirent.name))

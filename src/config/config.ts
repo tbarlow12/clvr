@@ -1,14 +1,13 @@
-import path from "path";
 import fs from "fs";
-import { Program } from "./program";
-import { CommanderStatic } from "commander";
-import { Logger } from "../utils/logger";
 import glob from "glob";
+import path from "path";
+import { Logger } from "../utils/logger";
 import { Utils } from "../utils/utils";
+import { Program } from "./program";
 
 export interface CloverConfig {
   /** Parent of test directories */
-  parent?: string;
+  parentDir?: string;
   /** Filter for test directories */
   directories?: string;
   /** Glob pattern for all test files Default is  '\*\*\/*.clvr.(ts|js)' */
@@ -24,20 +23,23 @@ const defaultConfig: CloverConfig = {
   runAsync: false,
 }
 
+
 export class Config {
   private config: CloverConfig;
-  private program: CommanderStatic;
+  private program: Program;
   
   public constructor() {
-    this.program = Program.get();
+    this.program = new Program();
     this.config = this.getConfig();
   }
 
   public getDirectories(): string[] {
-    const parentDirectory: string = this.program.parent || this.config.parent;
-    const directoryFilter: string = this.program.directories || this.config.directories
+    const parentDirectory: string = this.program.getParent() || this.config.parentDir;
+    Logger.log(`Using parent directory ${parentDirectory}`);
+    const directoryFilter: string = this.program.getDirectories() || this.config.directories;
     let directories = Utils.getDirectories(parentDirectory);
     if (directoryFilter) {
+      Logger.log(`Filtering on directories that include '${directoryFilter}'`)
       const lowerFilter = directoryFilter.toLowerCase();
       directories = directories
         .filter((dir) => dir.toLowerCase().includes(lowerFilter))
@@ -47,7 +49,7 @@ export class Config {
 
   public getTests(): string[] {
     const testsGlob = this.config.testPattern;
-    const testFilter = this.program.tests || this.config.tests;
+    const testFilter = this.program.getTests() || this.config.tests;
     Logger.log(`Looking for tests matching pattern '${testsGlob}'`);
     if (testFilter) {
       Logger.log(`Filtering on tests that include '${testFilter}'`);
@@ -55,7 +57,6 @@ export class Config {
     let testFiles = glob.sync(testsGlob);
     if (testFilter) {
       const lowerFilter = testFilter.toLowerCase();
-      const sep = path.sep;
       testFiles = testFiles
         .filter((file) => file.toLowerCase().includes(lowerFilter))
     }
@@ -64,7 +65,8 @@ export class Config {
   }
 
   private getConfig(): CloverConfig {
-    const fullConfigPath = (path.join(process.cwd(), this.program.config || "clvr.config.json"));
+    const configFileName = this.program.getConfig() || "clvr.config.json";
+    const fullConfigPath = (path.join(process.cwd(), configFileName));
     if (fs.existsSync(fullConfigPath)) {
       const config: CloverConfig = require(fullConfigPath);
       return {
@@ -72,6 +74,7 @@ export class Config {
         ...config
       };
     } else {
+      Logger.warn(`File ${configFileName} does not exist. Using default config`)
       return defaultConfig;  
     }
   }

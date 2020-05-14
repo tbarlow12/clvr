@@ -1,4 +1,4 @@
-import { Config } from "../cli/config";
+import { Config } from "../config/config";
 import { CloverTest } from "../models/clover";
 import { Parameters } from "../models/parameters";
 import { ResultSet } from "../models/results";
