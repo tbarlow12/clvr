@@ -2,7 +2,7 @@ import commander, { CommanderStatic } from "commander";
 import { Logger } from "../utils/logger";
 const packageJson = require("../../package.json");
 
-enum CliArg {
+export enum CliArg {
   CONFIG = "config",
   TESTS = "tests",
   DIRECTORIES = "dirs",
@@ -13,7 +13,6 @@ export class Program {
   private program: CommanderStatic;
 
   public constructor() {
-    Logger.log(process.argv.join(","))
     this.program = commander
       .version(packageJson.version)
       .description("This is my CLI")
