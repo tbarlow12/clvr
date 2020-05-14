@@ -3,7 +3,7 @@ module.exports = {
     "src/**/*.{js,jsx,ts,tsx}",
     "!src/**/*.d.ts",
     "!src/test/*.ts",
-    "!src/cli.ts"
+    "!src/cli/cli.ts"
   ],
   "testEnvironment": "node",
   "transform": {

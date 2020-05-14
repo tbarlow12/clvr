@@ -8,11 +8,17 @@ import { Logger } from "./logger";
 export class Utils {
 
   private static variableRegex = /\${([a-zA-Z]+)}/g
+  private static backslashRegex = /\\/g
+  private static slashRegex = /\//g
   
   public static getDirectories(source = ".") {
     return readdirSync(source, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => join(source, dirent.name))
+  }
+
+  public static normalizeSlash(path: string) {
+    return path.replace(Utils.backslashRegex, sep).replace(Utils.slashRegex, sep);
   }
   
   public static getDirName(directory: string) {

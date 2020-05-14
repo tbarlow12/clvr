@@ -9,6 +9,7 @@ export class Program {
       .option("-c, --config <value>", "Path to configuration file")
       .option("-t, --tests <value>", "Filter for test file(s)")
       .option("-p --parent <value>", "Path to parent of test directories")
+      .option("-d, --directories <value>", "Filter for test directories")
       .parse(process.argv);
   } 
 }

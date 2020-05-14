@@ -1,26 +1,21 @@
-import { getConfig } from "../cli/config";
-import { Initializer } from "../utils/initializer";
-import { Logger } from "../utils/logger";
+import { Config } from "../cli/config";
 import { CloverTest } from "../models/clover";
 import { Parameters } from "../models/parameters";
 import { ResultSet } from "../models/results";
 import { CommandValidation } from "../models/validation";
-import { Program } from "../cli/program";
-import { runCommandChain } from "./runner";
 import { Summarizers } from "../summary/summarizers";
+import { Initializer } from "../utils/initializer";
+import { Logger } from "../utils/logger";
 import { Utils } from "../utils/utils";
+import { runCommandChain } from "./runner";
 
 /**
  * Run clover tests
  * @param tests Array of clover tests to run
  */
 export function run(test: CloverTest) {
-  const program = Program.get();
-  const config = getConfig(program.config);
-  const parentDirectory = program.parent || config.parent;
-  const directories = (parentDirectory)
-    ? Utils.getDirectories(parentDirectory)
-    : ["."]
+  const config = new Config();
+  const directories = config.getDirectories();
   return runInternal([ test ], directories).catch(() => { process.exit(1); });
 }
 
