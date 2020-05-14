@@ -9,17 +9,17 @@ export interface CloverConfig {
   /** Parent of test directories */
   parentDir?: string;
   /** Filter for test directories */
-  directories?: string;
+  directoryFilter?: string;
   /** Glob pattern for all test files Default is  '\*\*\/*.clvr.+(ts|js)' */
   testPattern: string;
   /** Filter for test files */
-  tests?: string;
+  testFilter?: string;
   /** Specifies if the tests should be run asynchronously. Default to false */
   runAsync: boolean;
 }
 
 const defaultConfig: CloverConfig = {
-  testPattern: "**/*.clvr.+(ts|js)",
+  testPattern: "**/*.clvr.@(ts|js|json)",
   runAsync: false,
 }
 
@@ -35,13 +35,12 @@ export class Config {
 
   public getDirectories(): string[] {
     const parentDirectory: string = this.program.getParent() || this.config.parentDir;
-    const directoryFilter: string = this.program.getDirFilter() || this.config.directories;
+    const directoryFilter: string = this.program.getDirFilter() || this.config.directoryFilter;
     if (!parentDirectory && !directoryFilter) {
       return ["."]
     }
     let directories = Utils.getDirectories(parentDirectory);
     if (directoryFilter) {
-      Logger.log(`Filtering on directories that include '${directoryFilter}'`)
       const lowerFilter = directoryFilter.toLowerCase();
       directories = directories
         .filter((dir) => dir.toLowerCase().includes(lowerFilter))
@@ -51,10 +50,10 @@ export class Config {
 
   public getTests(): string[] {
     const testsGlob = this.config.testPattern;
-    const testFilter = this.program.getTestFilter() || this.config.tests;
+    const testFilter = this.program.getTestFilter() || this.config.testFilter;
     Logger.log(`Looking for tests matching pattern '${testsGlob}'`);
     if (testFilter) {
-      Logger.log(`Filtering on tests that include '${testFilter}'`);
+      Logger.log(`Filtering on tests containing '${testFilter}'`)
     }
     let testFiles = glob.sync(testsGlob);
     if (testFilter) {

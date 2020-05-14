@@ -14,13 +14,16 @@ You can make assertions against `stdout`, `stderr`, files, or even a custom pred
     - [How It Works](#how-it-works)
   - [Getting Started](#getting-started)
     - [Run Your First Test](#run-your-first-test)
-    - [CloverTest](#clovertest)
+    - [Data Structures](#data-structures)
+      - [Clover Config](#clover-config)
+      - [Clover Test](#clover-test)
+      - [CommandValidation](#commandvalidation)
     - [Types of Assertions](#types-of-assertions)
-  - [Run Your First Test](#run-your-first-test-1)
   - [Examples](#examples)
     - [Simple Test](#simple-test)
     - [Simple Parameterized Test](#simple-parameterized-test)
     - [Custom Evaluator](#custom-evaluator)
+    - [Conditional Execution](#conditional-execution)
 
 ## About Clover
 
@@ -39,13 +42,13 @@ This section will be your guide to using Clover within your development process
 ### Run Your First Test
 
 1. Install clvr
-   ```bash
-   $ npm i clvr
-   ```
+    ```bash
+    $ npm i clvr
+    ```
 2. Create test file
-   ```javascript
-    // basic.clvr.js
-    const clvr = require("clvr");
+    ```typescript
+    // basic.clvr.ts
+    import clvr from "clvr";
 
     clvr({
       validations: [
@@ -57,18 +60,85 @@ This section will be your guide to using Clover within your development process
         }
       ]
     });
-   ```
+    ```
+    This file can be a `.ts`, `.js` or even `.json` file. TypeScript and JavaScript allow for more custom assertions, but if you don't need that, `basic.clvr.json` would work just fine.
 
+    `clvr` will check the file extension and spawn the appropriate process to run the test.
 
+3. Add `clvr` to your `package.json` scripts section:
+    ```json
+    {
+      "scripts": {
+        "clvr": "clvr"
+      }
+    }
+    ```
+4. Run `clvr`
+    ```bash
+    $ npm run clvr
+    ```
+    You should see output that looks something like:
+    ```  
+               _
+         ___  | | __   __  _ __ 
+        / __| | | \ \ / / | '__|
+       | (__  | |  \ V /  | |   
+        \___| |_|   \_/   |_|   
 
-### CloverTest
+      Looking for tests matching pattern '**/*.clvr.@(ts|js)' 
+      Running tests: basic.clvr.js 
+      . 'echo hello' finished 
+      PASSED - . - echo hello
+      stdout:
+      hello
+      
+      
+      
+      TEST RESULTS: 
+      TOTAL: 1
+      PASSED: 1
+      SKIPPED: 0
+      FAILED: 0 
+      ```
+
+### Data Structures
+
+#### Clover Config
+
+`clvr` can accept any `.json` file as config, when the path is given in the CLI via the `-c` flag (`clvr -c myconfig.json`). `clvr` will look for `clvr.config.json` by default. Here is the structure of the config:
+
+```json
+{
+  "parentDir": "Path to parent of all test directories",
+  "directoryFilter": "Filter for test directories",
+  "testPattern": "Glob pattern for all test files. Default is **/*.clvr.@(ts|js|json)",
+  "testFilter": "Filter for all test files",
+  "runAsync": "Specifies if tests should be run asynchronously. Default is false"
+}
+```
+
+A config file is not necessary. The default config could work just fine. If no `parentDir` or `directoryFilter` is specified, the tests will be run in your current working directory.
+
+All of these options, with the exception of `testPattern` and `runAsync`, can be specified in the command line via their respective flags:
+
+`parentDir` = `-p <value>`
+`directoryFilter` = `-d <value>`
+`testFilter` = `-t <value>`
+
+For help on CLI options, you can always run:
+
+```bash
+$ clvr -h
+```
+
+#### Clover Test
 
 The default exported function takes an object of type `CloverTest`. Here is the structure of that object:
 
 ```typescript
 export interface CloverTest {
   /**
-   * The only required property. Array of commands to 
+  * The only required property. Array of commands to 
   * execute along with their accompanying assertions.
   */
   validations: CommandValidation[];
@@ -96,6 +166,8 @@ export interface CloverTest {
 }
 ```
 
+#### CommandValidation
+
 As you can see, the only required attribute in a `CloverTest` is `validations`, which is an array of type `CommandValidation`. These contain the commands to execute as well as all assertions to make as a result of the command being run. Here is the structure of the `CommandValidation` object:
 
 ```typescript
@@ -104,19 +176,33 @@ As you can see, the only required attribute in a `CloverTest` is `validations`, 
  * commands that need to be run and what their expected behavior is.
  */
 export interface CommandValidation {
-  /** Full string (including arguments) of command to run */
+  /** 
+   * Full string (including arguments) of command to run
+   */
   command: string;
-  /** Object that describes expected output to stdout */
+  /** 
+   * Object that describes expected output to stdout 
+   */
   stdout?: ContentValidation;
-  /** Object that describes expected output to stderr */
+  /**
+   * Object that describes expected output to stderr
+   */
   stderr?: ContentValidation;
-  /** Object that describes expected state of files in directory after test is run */
+  /**
+   * Object that describes expected state of files in directory after test is run
+   */
   files?: FileStructureValidation;
-  /** Custom predicate for command result */
+  /**
+   * Custom predicate for command result
+   */
   custom?: {(parameters: InterpolateParameters, directory: string, stdout: string, stderr: string): void};
-  /** Predicate condition that, if false, prevents the step from being run */
+  /** 
+   * Predicate condition that, if false, prevents the step from being run 
+   */
   condition?: {(directory: string): boolean};
-  /** Does not print stdout from command (will still print stderr) */
+  /**
+   * Does not print stdout from command (will still print stderr)
+   */
   silent?: boolean
 }
 ```
@@ -145,117 +231,65 @@ Each command can make 0 or many assertions. Here are the types of assertions tha
 
 Helpful tip: things like `npm install` commands where you don't really care about the output, add `silent: true` to the validation object. 
 
-## Run Your First Test
-1. `npm install clvr`
-2. Create `run.js` file and import the `run` function from `clvr`:
-    
-    ```javascript
-    const { run } = require("clvr");
-    ```
-3. Run a `CloverTest` Array
-   
-    The `run` function takes in an array of `CloverTest` (see above).
-
-    An example usage of `run` could be as simple as:
-    ```javascript
-    const { run } = require("clvr");
-
-    run([
-      {
-        validations: [
-          {
-            command: "echo hello",
-            stdout: {
-              shouldBeExactly: "hello\n"
-            }
-          },
-        ],
-      }
-    ]);
-    ```
-    Run your test:
-
-    ```bash
-    $ node test.js
-    ```
-    You should see the following results:
-    ```bash
-    PASSED - . - echo hello # Green
-    stdout: # Green
-    hello #Green
-    ```
-    If we were to make it fail by substituting `hi` for `hello` in our assertion, we would see:
-
-    ```bash
-    # This will all be in red
-    FAILED - . - echo hello - Expected 'hi
-    ' Actual 'hello
-    '
-    stdout:
-    hello
-    ```
-
 ## Examples
 
 ### Simple Test
 
-```javascript
-const { run } = require("clvr");
+```typescript
+import clvr from "clvr";
 
-run([
-  {
-    name: "Simple Tests",
-    validations: [
-      {
-        command: "echo hello",
-        stdout: {
-          shouldBeExactly: "hello\n"
-        }
-      },
-      {
-        command: "ls",
-        stdout: {
-          shouldNotContain: [
-            "file.txt"
-          ]
-        }
-      },
-      {
-        command: "touch file.txt",
-        files: {
-          "file.txt": {
-            shouldExist: true,
-            shouldBeExactly: ""
-          }
-        }
-      },
-      {
-        command: "ls",
-        stdout: {
-          shouldContain: [
-            "file.txt"
-          ]
-        },
-        // You can have multiple assertion
-        // types in one command validation
-        files: {
-          "file.txt": {
-            shouldExist: true,
-            shouldBeExactly: ""
-          }
-        }
-      },
-      {
-        command: "rm file.txt",
-        files: {
-          "file.txt": {
-            shouldExist: false,
-          }
+clvr({
+  name: "Simple Tests",
+  validations: [
+    {
+      command: "echo hello",
+      stdout: {
+        shouldBeExactly: "hello\n"
+      }
+    },
+    {
+      command: "ls",
+      stdout: {
+        shouldNotContain: [
+          "file.txt"
+        ]
+      }
+    },
+    {
+      command: "touch file.txt",
+      files: {
+        "file.txt": {
+          shouldExist: true,
+          shouldBeExactly: ""
         }
       }
-    ]
-  }
-]);
+    },
+    {
+      command: "ls",
+      stdout: {
+        shouldContain: [
+          "file.txt"
+        ]
+      },
+      // You can have multiple assertion
+      // types in one command validation
+      files: {
+        "file.txt": {
+          shouldExist: true,
+          shouldBeExactly: ""
+        }
+      }
+    },
+    {
+      command: "rm file.txt",
+      files: {
+        "file.txt": {
+          shouldExist: false,
+        }
+      }
+    }
+  ]
+});
 ```
 
 ### Simple Parameterized Test
@@ -263,102 +297,127 @@ run([
 Let's assume the following file structure:
 
 ```
-| dir1
-  - hello.txt
-| dir2
-  - hi.txt
+| dirs
+  | dir1
+    - hello.txt
+  | dir2
+    - hi.txt
 ```
-and each of those `.txt` files contains `hello!` or `hi!` respectively:
+and each of those `.txt` files contains `hello!` or `hi!` respectively.
 
-```javascript
-const { run } = require("clvr");
+We'll also TODO - CONFIG
 
-run([
-  {
-    name: "Simple Parameterized Tests",
-    directories: [
-      "dir1",
-      "dir2",
-    ]
-    parameters: {
-      dir1: {
-        value: "hello",
-        fileName: "hello.txt",
+```typescript
+import clvr from "clvr";
+
+clvr({
+  name: "Simple Parameterized Tests",
+  parameters: {
+    dir1: {
+      value: "hello",
+      fileName: "hello.txt",
+    },
+    dir2: {
+      value: "hi",
+      fileName: "hi.txt",
+    }
+  }
+  validations: [
+    {
+      command: "cat ${fileName}",
+      stdout: {
+        shouldBeExactly: "${value}"
       },
-      dir2: {
-        value: "hi",
-        fileName: "hi.txt",
+      files: {
+        "${fileName}": {
+          shouldExist: true,
+          shouldBeExactly: "${value}"
+        }
+      }
+    },
+    {
+      command: "rm ${fileName}",
+      files: {
+        "${fileName}": {
+          shouldExist: false,
+        }
       }
     }
-    validations: [
-      {
-        command: "cat ${fileName}",
-        stdout: {
-          shouldBeExactly: "${value}"
-        },
-        files: {
-          "${fileName}": {
-            shouldExist: true,
-            shouldBeExactly: "${value}"
-          }
-        }
-      },
-      {
-        command: "rm ${fileName}",
-        files: {
-          "${fileName}": {
-            shouldExist: false,
-          }
-        }
-      }
-    ],
-  }
-]);
+  ],
+});
 ```
 
 ### Custom Evaluator
 
-```javascript
-const { run } = require("clvr");
+```typescript
+import clvr from "clvr";
 
-run([
-  {
-    name: "Simple Parameterized Tests",
-    directories: [
-      "dir1",
-      "dir2",
-    ]
-    parameters: {
-      dir1: {
-        value: "hello",
-        fileName: "hello.txt",
-      },
-      dir2: {
-        value: "hi",
-        fileName: "hi.txt",
+clvr({
+  name: "Simple Parameterized Tests",
+  parameters: {
+    dir1: {
+      value: "hello",
+      fileName: "hello.txt",
+    },
+    dir2: {
+      value: "hi",
+      fileName: "hi.txt",
+    }
+  }
+  validations: [
+    {
+      command: "cat ${fileName}",
+      custom: (parameters, directory, stdout, stderr) => {
+        if (directory === "dir1") {
+          console.log("Got to dir1 directory");
+        }
+        if (stdout !== parameters["value"] + "\n") {
+          throw new AssertionError({message: "File did not have correct value"});
+        }
+      }
+    },
+    {
+      command: "rm ${fileName}",
+      files: {
+        "${fileName}": {
+          shouldExist: false,
+        }
       }
     }
-    validations: [
-      {
-        command: "cat ${fileName}",
-        custom: (parameters, directory, stdout, stderr) => {
-          if (directory === "dir1") {
-            console.log("Got to dir1 directory");
-          }
-          if (stdout !== parameters["value"] + "\n") {
-            throw new AssertionError({message: "File did not have correct value"});
-          }
-        }
-      },
-      {
-        command: "rm ${fileName}",
-        files: {
-          "${fileName}": {
-            shouldExist: false,
-          }
+  ],
+});
+```
+
+### Conditional Execution
+
+```typescript
+import clvr from "clvr";
+
+clvr({
+  name: "Simple Parameterized Tests",
+  parameters: {
+    dir1: {
+      value: "hello",
+      fileName: "hello.txt",
+    },
+    dir2: {
+      value: "hi",
+      fileName: "hi.txt",
+    }
+  }
+  validations: [
+    {
+      command: "cat ${fileName}",
+      condition: (directory) => directory === "dirs/dir1"
+    },
+    {
+      command: "rm ${fileName}",
+      files: {
+        "${fileName}": {
+          shouldExist: false,
         }
       }
-    ],
-  }
-]);
+    }
+  ],
+});
 ```
