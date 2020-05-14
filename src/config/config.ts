@@ -35,8 +35,10 @@ export class Config {
 
   public getDirectories(): string[] {
     const parentDirectory: string = this.program.getParent() || this.config.parentDir;
-    Logger.log(`Using parent directory ${parentDirectory}`);
     const directoryFilter: string = this.program.getDirectories() || this.config.directories;
+    if (!parentDirectory && !directoryFilter) {
+      return ["."]
+    }
     let directories = Utils.getDirectories(parentDirectory);
     if (directoryFilter) {
       Logger.log(`Filtering on directories that include '${directoryFilter}'`)
