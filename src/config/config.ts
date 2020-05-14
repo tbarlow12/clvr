@@ -10,7 +10,7 @@ export interface CloverConfig {
   parentDir?: string;
   /** Filter for test directories */
   directories?: string;
-  /** Glob pattern for all test files Default is  '\*\*\/*.clvr.(ts|js)' */
+  /** Glob pattern for all test files Default is  '\*\*\/*.clvr.+(ts|js)' */
   testPattern: string;
   /** Filter for test files */
   tests?: string;
@@ -19,7 +19,7 @@ export interface CloverConfig {
 }
 
 const defaultConfig: CloverConfig = {
-  testPattern: "**/*.clvr.(ts|js)",
+  testPattern: "**/*.clvr.+(ts|js)",
   runAsync: false,
 }
 
