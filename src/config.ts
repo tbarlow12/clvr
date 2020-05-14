@@ -2,13 +2,14 @@ import path from "path";
 import fs from "fs";
 
 export interface CloverConfig {
-  directories?: string;
-  tests?: string;
-  runAsync?: boolean;
+  parent: string;
+  testPattern: string;
+  runAsync: boolean;
 }
 
 const defaultConfig: CloverConfig = {
-  tests: "**/*.clvr.(ts|js)",
+  parent: ".",
+  testPattern: "**/*.clvr.(ts|js)",
   runAsync: false,
 }
 

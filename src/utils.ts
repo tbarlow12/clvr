@@ -1,5 +1,5 @@
 import { readdirSync } from "fs";
-import { sep } from "path";
+import { sep, join } from "path";
 import { spawn } from "cross-spawn";
 import { normalize } from "path"
 import { InterpolateParameters } from "./models/parameters";
@@ -12,7 +12,7 @@ export class Utils {
   public static getDirectories(source = ".") {
     return readdirSync(source, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name)
+      .map(dirent => join(source, dirent.name))
   }
   
   public static getDirName(directory: string) {

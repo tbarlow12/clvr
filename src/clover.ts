@@ -1,4 +1,3 @@
-import glob from "glob";
 import { getConfig } from "./config";
 import { Initializer } from "./initializer";
 import { Logger } from "./logger";
@@ -18,9 +17,9 @@ import { Utils } from "./utils";
 export function run(test: CloverTest) {
   const program = Program.get();
   const config = getConfig(program.config);
-  const directoryGlob = program.directories || config.directories;
-  const directories = (directoryGlob)
-    ? glob.sync(directoryGlob)
+  const parentDirectory = program.parent || config.parent;
+  const directories = (parentDirectory)
+    ? Utils.getDirectories(parentDirectory)
     : ["."]
   return runInternal([ test ], directories).catch(() => { process.exit(1); });
 }
