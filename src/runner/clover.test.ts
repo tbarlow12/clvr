@@ -1,19 +1,14 @@
 import fs from "fs";
 import { run, runInternal } from "./clover";
-import { CloverTest } from "./models/clover";
-import { ResultSet, TestResult } from "./models/results";
+import { CloverTest } from "../models/clover";
+import { ResultSet, TestResult } from "../models/results";
 
-jest.mock("./program");
-import { Program } from "./program";
+jest.mock("../config/program");
+import { Program } from "../config/program";
 
-jest.mock("./logger");
+jest.mock("../utils/logger");
 
 describe("Clover", () => {
-  
-  beforeAll(() => {
-    Program.get = jest.fn(() => { return {} }) as any;
-  });
-
   it("runs a test through main entry point", async () => {
     const test: CloverTest = {
       validations: [
@@ -165,7 +160,7 @@ describe("Clover", () => {
         validations: [
           {
             command: "cat ${fileName}",
-            condition: (dir) => dir === "test/dir2",
+            condition: (dir) => dir === "test/directories/dir2",
             stdout: {
               shouldBeExactly: "Hi!",
             }
@@ -183,7 +178,7 @@ describe("Clover", () => {
         }
       }
     ]
-    await runInternal(tests, [ "test/dir1", "test/dir2" ]);
+    await runInternal(tests, [ "test/directories/dir1", "test/directories/dir2" ]);
 
     const { results } = tests[0];
 

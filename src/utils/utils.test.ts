@@ -3,7 +3,7 @@ import { join } from "path";
 
 describe("Utils", () => {
   it("getDirectories", () => {
-    expect(Utils.getDirectories("src")).toEqual(["models"])
+    expect(Utils.getDirectories("test")).toEqual([join("test", "directories")]);
   });
 
   it("getDirName", () => {

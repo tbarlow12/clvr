@@ -2,10 +2,10 @@ import { AssertionError } from "assert";
 import fs from "fs";
 import { join } from "path";
 import { Assert } from "./assert";
-import { InterpolateParameters } from "./models/parameters";
-import { DirectoryResultSet } from "./models/results";
-import { CommandValidation, ContentValidation, FileStructureValidation } from "./models/validation";
-import { Utils } from "./utils";
+import { InterpolateParameters } from "../models/parameters";
+import { DirectoryResultSet } from "../models/results";
+import { CommandValidation, ContentValidation, FileStructureValidation } from "../models/validation";
+import { Utils } from "../utils/utils";
 
 export class Validator {
 

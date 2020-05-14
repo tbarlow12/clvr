@@ -1,11 +1,11 @@
 import path from "path";
 import { runTestFiles } from "./testRunner";
 
-jest.mock("./utils");
-import { Utils } from "./utils";
+jest.mock("../utils/utils");
+import { Utils } from "../utils/utils";
 
 jest.mock("./clover");
-import { run } from "./clover"
+import { run } from "../runner/clover"
 
 describe("Test Runner", () => {
   beforeEach(() => {

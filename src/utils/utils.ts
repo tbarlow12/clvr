@@ -1,18 +1,28 @@
-import { readdirSync } from "fs";
-import { sep } from "path";
+import { readdirSync, fstat } from "fs";
+import { sep, join } from "path";
 import { spawn } from "cross-spawn";
 import { normalize } from "path"
-import { InterpolateParameters } from "./models/parameters";
+import { InterpolateParameters } from "../models/parameters";
 import { Logger } from "./logger";
+import fs from "fs";
 
 export class Utils {
 
   private static variableRegex = /\${([a-zA-Z]+)}/g
+  private static backslashRegex = /\\/g
+  private static slashRegex = /\//g
   
   public static getDirectories(source = ".") {
+    if (!fs.existsSync(source)) {
+      throw new Error(`Directory ${source} does not exist`);
+    }
     return readdirSync(source, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name)
+      .map(dirent => join(source, dirent.name))
+  }
+
+  public static normalizeSlash(path: string) {
+    return path.replace(Utils.backslashRegex, sep).replace(Utils.slashRegex, sep);
   }
   
   public static getDirName(directory: string) {
@@ -79,29 +89,4 @@ export class Utils {
     });
     return childProcess
   }
-
-  // public static spawnInherit(command: string, args: string[]): Promise<void> {
-  //   return new Promise((resolve, reject) => {
-  //     const childProcess = spawn(command, args, {
-  //       stdio: "inherit"
-  //     });
-
-  //     childProcess.on("close", (code) => {
-  //       if (code === 0) {
-
-  //       }
-  //     });
-  
-  //     childProcess.on("exit", (code, signal) => {
-  //       if (code === 0) {
-  //         resolve();
-  //       } else {
-  //         // const message = `Exited command '${command}' with error code ${code}`
-  //         // Logger.error(message);
-  //         // reject(message);
-  //         reject();
-  //       }
-  //     });
-  //   });
-  // }
 }

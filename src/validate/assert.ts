@@ -1,7 +1,7 @@
 import { AssertionError } from "assert";
 import fs from "fs";
-import { InterpolateParameters } from "./models/parameters";
-import { Utils } from "./utils";
+import { InterpolateParameters } from "../models/parameters";
+import { Utils } from "../utils/utils";
 
 export class Assert {
 

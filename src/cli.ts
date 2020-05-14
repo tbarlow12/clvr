@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 import chalk from "chalk";
-import glob from "glob";
-import { getConfig } from "./config";
-import { Logger } from "./logger";
-import { Program } from "./program";
-import { runTestFiles } from "./testRunner";
+import { runTestFiles } from "./runner/testRunner";
+import { Logger } from "./utils/logger";
+import { Config } from "./config/config";
 
 Logger.asciiArt("clvr", chalk.greenBright);
-const program = Program.get();
-const config = getConfig(program.config);
-const testsGlob = program.tests || config.tests;
-Logger.log(`Looking for tests matching pattern '${testsGlob}'`);
-const testFiles = glob.sync(testsGlob);
-Logger.log(`Running tests: ${testFiles.join(", ")}`)
+const config = new Config();
+const testFiles = config.getTests();
+Logger.log(`Running tests: ${testFiles.join(",")}`);
+const directories = config.getDirectories();
+Logger.log(`Against directories: ${directories.join(",")}`)
 runTestFiles(testFiles);
