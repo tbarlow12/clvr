@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "clvr": "^0.6.5"
+    "clvr": "^0.6.5",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
   }
 }
