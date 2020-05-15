@@ -20,14 +20,13 @@ describe("Test Runner", () => {
     await runTestFiles(["file.ts"]);
     const calls = (Utils.createSpawn as any).mock.calls;
     expect(calls).toHaveLength(1);
-    expect(calls[0]).toEqual([
-      process.cwd(),
-      path.join(process.cwd(), "node_modules", ".bin", "ts-node"),
-      [ "file.ts" ],
-      expect.any(Function),
-      expect.any(Function),
-      true
-    ]);
+    const call = calls[0];
+    expect(call[0]).toEqual(process.cwd());
+    expect(call[1]).toEqual(path.join(process.cwd(), "node_modules", ".bin", "ts-node"));
+    expect(call[2][0]).toEqual("file.ts");
+    expect(call[3]).toEqual(expect.any(Function));
+    expect(call[4]).toEqual(expect.any(Function));
+    expect(call[5]).toBe(true);
     (Utils.createSpawn as any).mockReset();
     await calls[0][3]();
     expect(Utils.createSpawn).not.toBeCalled();
@@ -35,14 +34,15 @@ describe("Test Runner", () => {
 
   it("runs javascript", async () => {
     await runTestFiles(["file.js"]);
-    expect(Utils.createSpawn).toBeCalledWith(
-      process.cwd(),
-      "node",
-      [ "file.js" ],
-      expect.any(Function),
-      expect.any(Function),
-      true
-    );
+    const calls = (Utils.createSpawn as any).mock.calls;
+    expect(calls).toHaveLength(1);
+    const call = calls[0];
+    expect(call[0]).toEqual(process.cwd());
+    expect(call[1]).toEqual("node");
+    expect(call[2][0]).toEqual("file.js");
+    expect(call[3]).toEqual(expect.any(Function));
+    expect(call[4]).toEqual(expect.any(Function));
+    expect(call[5]).toBe(true);
   });
 
   it("runs JSON", async () => {
