@@ -1,0 +1,10 @@
+{
+  "validations": [
+    {
+      "command": "echo hello",
+      "stdout": {
+        "shouldBeExactly": "hello\n"
+      }
+    }
+  ]
+}
