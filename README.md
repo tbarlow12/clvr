@@ -85,7 +85,7 @@ This section will be your guide to using Clover within your development process
        | (__  | |  \ V /  | |   
         \___| |_|   \_/   |_|   
 
-      Looking for tests matching pattern '**/*.clvr.@(ts|js)' 
+      Looking for tests matching pattern '**/*.clvr.@(ts|js|json)' 
       Running tests: basic.clvr.js 
       . 'echo hello' finished 
       PASSED - . - echo hello
@@ -119,7 +119,7 @@ This section will be your guide to using Clover within your development process
 
 A config file is not necessary. The default config could work just fine. If no `parentDir` or `directoryFilter` is specified, the tests will be run in your current working directory.
 
-All of these options, with the exception of `testPattern` and `runAsync`, can be specified in the command line via their respective flags:
+Some of these options can be specified in the command line via their respective flags:
 
 `parentDir` = `-p <value>`
 `directoryFilter` = `-d <value>`
@@ -302,10 +302,20 @@ Let's assume the following file structure:
     - hello.txt
   | dir2
     - hi.txt
+- test.clvr.ts
+- clvr.config.json
 ```
 and each of those `.txt` files contains `hello!` or `hi!` respectively.
 
-We'll also TODO - CONFIG
+We'll also assume that our `clvr.config.json`, located in the root of the project, looks like:
+
+```json
+{
+  "parentDir": "dirs",
+}
+```
+
+Specifying the `parentDir` in our config lets `clvr` know to run the tests upon all child directories of `dirs`, which are `dir1` and `dir2`. We can make each test specific to the directory by providing parameters for those directories in the test, and then adding `${variableStubs}` where we want those parameter values to be.
 
 ```typescript
 import clvr from "clvr";
