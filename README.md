@@ -121,9 +121,9 @@ A config file is not necessary. The default config could work just fine. If no `
 
 Some of these options can be specified in the command line via their respective flags:
 
-`parentDir` = `-p <value>`
-`directoryFilter` = `-d <value>`
-`testFilter` = `-t <value>`
+- `parentDir` = `-p <value>`
+- `directoryFilter` = `-d <value>`
+- `testFilter` = `-t <value>`
 
 For help on CLI options, you can always run:
 
