@@ -1,0 +1,4 @@
+{
+  "testPattern": "**/*.clvr.json",
+  "parentDir": "directories"
+}
