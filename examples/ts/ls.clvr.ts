@@ -1,6 +1,7 @@
 import clvr from "clvr";
 
 clvr({
+  name: "ls typescript",
   validations: [
     {
       command: "ls",

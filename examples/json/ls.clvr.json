@@ -1,4 +1,5 @@
 {
+  "name": "ls json",
   "validations": [
     {
       "command": "ls",

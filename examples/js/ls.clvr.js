@@ -1,6 +1,7 @@
 const clvr = require("clvr").default;
 
 clvr({
+  name: "ls javascript",
   validations: [
     {
       command: "ls",

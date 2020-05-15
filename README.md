@@ -61,7 +61,7 @@ This section will be your guide to using Clover within your development process
       ]
     });
     ```
-    This file can be a `.ts`, `.js` or even `.json` file. TypeScript and JavaScript allow for more custom assertions, but if you don't need that, `basic.clvr.json` would work just fine.
+    This file can be a `.ts`, `.js` or even `.json` file. TypeScript and JavaScript allow for more custom assertions, but if you don't need that, `basic.clvr.json` would work just fine. Check out our [examples](./examples/) for TypeScript, JavaScript and JSON files.
 
     `clvr` will check the file extension and spawn the appropriate process to run the test.
 

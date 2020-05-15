@@ -14,7 +14,7 @@ export class Summarizers {
         message += `- ${failureMessage}`;
       }
       return message;
-    });
+    }, name);
   }
 
   public static verbose(results: ResultSet, name?: string) {
@@ -29,7 +29,7 @@ export class Summarizers {
         message += `\nstdout:\n${stdout}`;
       }
       return message;
-    });
+    }, name);
   }
 
   private static printSummary(

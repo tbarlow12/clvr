@@ -1,4 +1,5 @@
 {
+  "name": "echo json",
   "validations": [
     {
       "command": "echo hello",
