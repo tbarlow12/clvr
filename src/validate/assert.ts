@@ -24,7 +24,8 @@ export class Assert {
   }
 
   public exactly(actual: string, expected: string): void {
-    if (actual !== expected) {
+    const interpolated = this.interpolate(expected);
+    if (actual !== interpolated) {
       this.fail(`Expected '${expected}' Actual '${actual}'`)
     }
   }
