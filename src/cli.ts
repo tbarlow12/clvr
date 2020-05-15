@@ -6,6 +6,9 @@ import { Config } from "./config/config";
 
 Logger.asciiArt("clvr", chalk.greenBright);
 const config = new Config();
+
 const testFiles = config.getTests();
-Logger.log(`Running tests: ${testFiles.join(",")}`);
+const directories = config.getDirectories();
+Logger.log("Tests: " + testFiles.join(","));
+Logger.log("Directories: " + directories.join(","));
 runTestFiles(testFiles);

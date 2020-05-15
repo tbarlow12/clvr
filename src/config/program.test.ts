@@ -9,8 +9,8 @@ describe("Program", () => {
   
   beforeEach(() => {
     commander[CliArg.CONFIG] = CliArg.CONFIG
-    commander[CliArg.TESTS] = CliArg.TESTS;
-    commander[CliArg.DIRECTORIES] = CliArg.DIRECTORIES;
+    commander[CliArg.TEST_FILTER] = CliArg.TEST_FILTER;
+    commander[CliArg.DIR_FILTER] = CliArg.DIR_FILTER;
     commander[CliArg.PARENT] = CliArg.PARENT;
     commander.version = jest.fn(() => commander);
     commander.description = jest.fn(() => commander) as any;
@@ -35,10 +35,10 @@ describe("Program", () => {
   });
 
   it("gets tests", () => {
-    expect(program.getTests()).toEqual(CliArg.TESTS);
+    expect(program.getTestFilter()).toEqual(CliArg.TEST_FILTER);
   });
 
   it("gets directories", () => {
-    expect(program.getDirectories()).toEqual(CliArg.DIRECTORIES);
+    expect(program.getDirFilter()).toEqual(CliArg.DIR_FILTER);
   });
 });

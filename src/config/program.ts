@@ -4,8 +4,8 @@ const packageJson = require("../../package.json");
 
 export enum CliArg {
   CONFIG = "config",
-  TESTS = "tests",
-  DIRECTORIES = "dirs",
+  TEST_FILTER = "testFilter",
+  DIR_FILTER = "dirFilter",
   PARENT = "parentDir",
 }
 
@@ -18,8 +18,8 @@ export class Program {
       .description("This is my CLI")
       .option(`-c, --${CliArg.CONFIG} <${CliArg.CONFIG}>`, "Path to configuration file")
       .option(`-p, --${CliArg.PARENT} <${CliArg.PARENT}>`, "Path to parent of test directories")
-      .option(`-t, --${CliArg.TESTS} <${CliArg.TESTS}>`, "Filter for test file(s)")
-      .option(`-d, --${CliArg.DIRECTORIES} <${CliArg.DIRECTORIES}>`, "Filter for test directories")
+      .option(`-t, --${CliArg.TEST_FILTER} <${CliArg.TEST_FILTER}>`, "Filter for test file(s)")
+      .option(`-d, --${CliArg.DIR_FILTER} <${CliArg.DIR_FILTER}>`, "Filter for test directories")
       .parse(process.argv);
   } 
 
@@ -27,12 +27,12 @@ export class Program {
     return this.program[CliArg.CONFIG];
   }
 
-  public getTests() {
-    return this.program[CliArg.TESTS];
+  public getTestFilter() {
+    return this.program[CliArg.TEST_FILTER];
   }
 
-  public getDirectories() {
-    return this.program[CliArg.DIRECTORIES];
+  public getDirFilter() {
+    return this.program[CliArg.DIR_FILTER];
   }
 
   public getParent() {

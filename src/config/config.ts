@@ -35,7 +35,7 @@ export class Config {
 
   public getDirectories(): string[] {
     const parentDirectory: string = this.program.getParent() || this.config.parentDir;
-    const directoryFilter: string = this.program.getDirectories() || this.config.directories;
+    const directoryFilter: string = this.program.getDirFilter() || this.config.directories;
     if (!parentDirectory && !directoryFilter) {
       return ["."]
     }
@@ -51,7 +51,7 @@ export class Config {
 
   public getTests(): string[] {
     const testsGlob = this.config.testPattern;
-    const testFilter = this.program.getTests() || this.config.tests;
+    const testFilter = this.program.getTestFilter() || this.config.tests;
     Logger.log(`Looking for tests matching pattern '${testsGlob}'`);
     if (testFilter) {
       Logger.log(`Filtering on tests that include '${testFilter}'`);
