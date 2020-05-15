@@ -19,7 +19,7 @@ describe("Config", () => {
 
   it("gets test files with a filter", () => {
     Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
-    Program.prototype.getTests = jest.fn(() => "ls") as any;
+    Program.prototype.getTestFilter = jest.fn(() => "ls") as any;
     const config = new Config();
     const tests = config.getTests();
     expect(tests).toEqual([
@@ -39,7 +39,7 @@ describe("Config", () => {
 
   it("gets directories with a filter", () => {
     Program.prototype.getConfig = jest.fn(() => "test/clvr.config.json") as any;
-    Program.prototype.getDirectories = jest.fn(() => "dir1") as any;
+    Program.prototype.getDirFilter = jest.fn(() => "dir1") as any;
     const config = new Config();
     const directories = config.getDirectories();
     expect(directories).toEqual([
@@ -50,7 +50,7 @@ describe("Config", () => {
   it("returns current directory if no parent or filter provided", () => {
     Program.prototype.getConfig = jest.fn(() => "fake.config.json") as any;
     Program.prototype.getParent = jest.fn(() => undefined);
-    Program.prototype.getDirectories = jest.fn(() => undefined);
+    Program.prototype.getDirFilter = jest.fn(() => undefined);
     const config = new Config();
     const directories = config.getDirectories();
     expect(directories).toEqual(["."]);

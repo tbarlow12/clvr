@@ -22,11 +22,14 @@ export async function runTestFiles(testFiles: string[]) {
   } else {
     throw new Error(`Invalid file: ${testFile}`);
   }
-  
+  const args: string[] = []
+  for (let i = 2; i < process.argv.length; i++) {
+    args.push(process.argv[i]);
+  }  
   Utils.createSpawn(
     process.cwd(),
     executor,
-    [ testFile ],
+    [ testFile, ...args ],
     () => { runTestFiles(testFiles.slice(1, testFiles.length)); },
     () => { 
       Logger.error(`Test ${testFile} execution failed`);
