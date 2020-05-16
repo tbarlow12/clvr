@@ -4,11 +4,18 @@ import { CloverTest } from "../models/clover";
 import { ResultSet, TestResult } from "../models/results";
 
 jest.mock("../config/program");
-import { Program } from "../config/program";
 
 jest.mock("../utils/logger");
+import { Logger } from "../utils/logger";
 
 describe("Clover", () => {
+
+  beforeEach(() => {
+    Logger.warn = jest.fn();
+    Logger.log = jest.fn();
+    Logger.error = jest.fn();
+  });
+
   it("runs a test through main entry point", async () => {
     const test: CloverTest = {
       validations: [
@@ -244,6 +251,29 @@ describe("Clover", () => {
       expect(results["fakeExecutable2 fakeArg2"].run).toBe(false);
       expect(results["fakeExecutable2 fakeArg2"].passed).toBe(false);
     }
+  });
+
+  it("retries specified amount of times", async () => {
+    const command = "fakeExecutable fakeArg";
+    const retries = 3;
+    const tests: CloverTest[] = [
+      {
+        validations: [
+          {
+            command,
+            retries,
+          }
+        ]
+      }
+    ];
+    await expect(runInternal(tests, ["."])).rejects.toEqual(expect.any(Error));
+    const calls = (Logger.warn as any).mock.calls;
+    expect(calls).toEqual([
+      [`Command '${command}' failed. Retrying 3 more times`],
+      [`Command '${command}' failed. Retrying 2 more times`],
+      [`Command '${command}' failed. Retrying 1 more times`]
+    ]);
+    allTestsFailed(tests);
   });
 
 
