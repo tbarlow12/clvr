@@ -30,7 +30,7 @@ export async function runCommandChain(
     const commandName = split[0];
     const args = split.slice(1, split.length);
     const dirName = Utils.getDirName(directory);
-
+    Logger.log("");
     Utils.createSpawn(
       directory,
       commandName,
@@ -39,7 +39,9 @@ export async function runCommandChain(
         Validator.validate(validation, directory, stdout, stderr, parameters, results);
         // Recursive call for the rest of the chain
         runCommandChain(directory, validations.slice(1, validations.length), results, parameters, onFinish);
-        Logger.log(`${dirName} '${command}' finished`);
+        const result = results[validation.command];
+        const state = (!result.run) ? "SKIPPED" : (result.passed) ? "PASSED" : "FAILED"; 
+        Logger.log(`${state} - ${dirName} '${command}'`);
       },
       (stdout, stderr) => {
         const failureMessage = errorMessage(stdout, stderr, command, directory, results)
