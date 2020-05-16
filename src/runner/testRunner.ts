@@ -5,7 +5,7 @@ import { CloverTest } from "../models/clover";
 import { Utils } from "../utils/utils";
 import { Logger } from "../utils/logger";
 
-export async function runTestFiles(testFiles: string[]) {
+export async function runTestFiles(testFiles: string[]): Promise<void> {
   if (testFiles.length === 0) {
     return Promise.resolve();
   }
@@ -18,7 +18,7 @@ export async function runTestFiles(testFiles: string[]) {
   } else if (testFile.endsWith(".json")) {
     const test: CloverTest = require(path.join(process.cwd(), testFile));
     run(test);
-    return Promise.resolve();
+    return runTestFiles(testFiles.slice(1, testFiles.length));
   } else {
     throw new Error(`Invalid file: ${testFile}`);
   }
