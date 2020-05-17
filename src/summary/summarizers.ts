@@ -42,9 +42,15 @@ export class Summarizers {
       failed,
       skipped
     } = summary;
-    Logger.green(passed.map((result) => stringify(result, TestState.PASSED)).join("\n"));
-    Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
-    Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
+    if (passed.length > 0) {
+      Logger.green(passed.map((result) => stringify(result, TestState.PASSED)).join("\n"));
+    }
+    if (skipped.length > 0) {
+      Logger.warn(skipped.map((result) => stringify(result, TestState.SKIPPED)).join("\n"));
+    }
+    if (failed.length > 0) {
+      Logger.error(failed.map((result) => stringify(result, TestState.FAILED)).join("\n"));
+    }
     const p = passed.length;
     const f = failed.length;
     const s = skipped.length;

@@ -54,7 +54,13 @@ export async function runCommandChain(
           stdout,
           stderr,
         }
-        onFinish(results);
+        if (validation.retries) {
+          Logger.warn(`Command '${validation.command}' failed. Retrying ${validation.retries} more times`);
+          validation.retries--;
+          runCommandChain(directory, validations, results, parameters, onFinish);
+        } else {
+          onFinish(results);
+        }
       }
     );
   });

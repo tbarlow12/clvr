@@ -53,18 +53,36 @@ export interface FileStructureValidation {
  * commands that need to be run and what their expected behavior is.
  */
 export interface CommandValidation {
-  /** Full string (including arguments) of command to run */
+  /** 
+   * Full string (including arguments) of command to run 
+   */
   command: string;
-  /** Object that describes expected output to stdout */
+  /**
+   * Object that describes expected output to stdout
+   */
   stdout?: ContentValidation;
-  /** Object that describes expected output to stderr */
+  /**
+   * Object that describes expected output to stderr
+   */
   stderr?: ContentValidation;
-  /** Object that describes expected state of files in directory after test is run */
+  /**
+   * Object that describes expected state of files in directory after test is run
+   */
   files?: FileStructureValidation;
-  /** Custom predicate for command result */
+  /**
+   * Custom predicate for command result
+   */
   custom?: {(parameters: InterpolateParameters, directory: string, stdout: string, stderr: string): void};
-  /** Predicate condition that, if false, prevents the step from being run */
+  /**
+   * Predicate condition that, if false, prevents the step from being run
+   */
   condition?: {(directory: string): boolean};
-  /** Does not print stdout from command (will still print stderr) */
+  /**
+   * Does not print stdout from command (will still print stderr)
+   */
   silent?: boolean
+  /**
+   * Number of times to try executing the command if fails (does not retry on assertion failures)
+   */
+  retries?: number
 }
