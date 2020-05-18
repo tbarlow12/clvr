@@ -8,7 +8,7 @@ import { Program } from "./program";
 export interface CloverConfig {
   /** Parent of test directories */
   parentDir?: string;
-  /** Filter for test directories */
+  /** Regex filter for test directories - Regex should match entire folder name */
   directoryFilter?: string;
   /** Glob pattern for all test files Default is  '\*\*\/*.clvr.+(ts|js)' */
   testPattern: string;
@@ -35,34 +35,45 @@ export class Config {
 
   public getDirectories(): string[] {
     const parentDirectory: string = this.program.getParent() || this.config.parentDir;
-    const directoryFilter: string = this.program.getDirFilter() || this.config.directoryFilter;
-    if (!parentDirectory && !directoryFilter) {
+    const directoryRegex = this.getRegex(this.program.getDirFilter() || this.config.directoryFilter);
+    if (!parentDirectory && !directoryRegex) {
       return ["."]
     }
     let directories = Utils.getDirectories(parentDirectory);
-    if (directoryFilter) {
-      const lowerFilter = directoryFilter.toLowerCase();
+    if (directoryRegex) {
       directories = directories
-        .filter((dir) => dir.toLowerCase().includes(lowerFilter))
+        .filter((dir) => directoryRegex.test(Utils.getDirName(dir)));
     }
     return directories.map(Utils.normalizeSlash);
   }
 
   public getTests(): string[] {
     const testsGlob = this.config.testPattern;
-    const testFilter = this.program.getTestFilter() || this.config.testFilter;
+    const testFilter = this.getRegex(this.program.getTestFilter() || this.config.testFilter);
     Logger.log(`Looking for tests matching pattern '${testsGlob}'`);
     if (testFilter) {
       Logger.log(`Filtering on tests containing '${testFilter}'`)
     }
     let testFiles = glob.sync(testsGlob);
     if (testFilter) {
-      const lowerFilter = testFilter.toLowerCase();
       testFiles = testFiles
-        .filter((file) => file.toLowerCase().includes(lowerFilter))
+        .filter((file) => testFilter.test(Utils.getFileName(file)));
     }
     return testFiles.map(Utils.normalizeSlash);
 
+  }
+
+  private getRegex(value: string): RegExp|undefined {
+    if (!value) {
+      return undefined;
+    }
+    if (!value.startsWith("^")) {
+      value = "^" + value;
+    }
+    if (!value.endsWith("$")) {
+      value += "$";
+    }
+    return new RegExp(value, "i");
   }
 
   private getConfig(): CloverConfig {
