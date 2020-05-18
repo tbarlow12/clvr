@@ -34,6 +34,10 @@ export class Utils {
     return directory.substring(lastSlashIndex + 1);
   }
 
+  public static getFileName(path: string): string {
+    return ((path.split('\\') as string[]).pop() as string).split('/').pop() as string;
+  }
+
   public static containsVariable(original: string): boolean {
     return !!original.match(Utils.variableRegex);
   }

@@ -15,6 +15,13 @@ describe("Utils", () => {
     expect(Utils.getDirName("dir1/dir2/dir3/")).toEqual("dir3");
   });
 
+  it("getFileName", () => {
+    expect(Utils.getFileName("dir1/dir2/dir3/file.txt")).toEqual("file.txt");
+    expect(Utils.getFileName("file.txt")).toEqual("file.txt");
+    expect(Utils.getFileName(join("dir1", "dir2", "dir3", "file.txt"))).toEqual("file.txt");
+    expect(Utils.getFileName("dir1/")).toEqual("");
+  });
+
   it("containsVariable true", () => {
     expect(Utils.containsVariable("hello ${name}")).toBe(true);
   });
