@@ -5,10 +5,11 @@ import { normalize } from "path"
 import { InterpolateParameters } from "../models/parameters";
 import { Logger } from "./logger";
 import fs from "fs";
+import { constants } from "./constants";
 
 export class Utils {
 
-  private static variableRegex = /\${([a-zA-Z]+)}/g
+  private static variableRegex = /\${([a-zA-Z:_]+)}/g
   private static backslashRegex = /\\/g
   private static slashRegex = /\//g
   
@@ -42,12 +43,29 @@ export class Utils {
     return !!original.match(Utils.variableRegex);
   }
 
+  /**
+   * Interpolate a string with parameter values or environment variables
+   * @param original Original string, potentially with variable values
+   * @param parameters Variable replacement values
+   */
   public static interpolateString(original: string, parameters: InterpolateParameters): string {
     const variables = original.match(Utils.variableRegex);
     if (variables) {
       for (const m of variables) {
         const key = m.replace("$", "").replace("{", "").replace("}", "");
-        original = original.replace(m, parameters[key]);
+        if (parameters[key]) {
+          original = original.replace(m, parameters[key]);
+        }
+        else if (key.startsWith(constants.envVarKey)) {
+          const envVar = key.replace(constants.envVarKey, "");
+          const envVarValue = process.env[envVar];
+          if (!envVarValue) {
+            throw new Error(`Environment Variable ${envVar} not found`);
+          }
+          original = original.replace(m, envVarValue);
+        } else {
+          throw new Error(`Variable ${key} not found in parameters`);
+        }
       }
     }
     return original;

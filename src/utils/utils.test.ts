@@ -40,8 +40,27 @@ describe("Utils", () => {
       .toEqual("hello stockton ${name");
   });
 
+  it("interpolateString with variable and environment variable", () => {
+    const envVarKey = "TEST_VAR";
+    const envVarValue = "TEST_VALUE";
+    process.env[envVarKey] = envVarValue;
+    expect(Utils.interpolateString("hello ${name} ${env:TEST_VAR}", { name: "stockton" }))
+      .toEqual("hello stockton TEST_VALUE");
+    delete process.env[envVarKey];
+  });
+
   it("interpolateString without variable", () => {
     expect(Utils.interpolateString("hello malone", { name: "stockton" }))
       .toEqual("hello malone");
+  });
+  
+  it("interpolateString with missing parameter throws error", () => {
+    expect(() => Utils.interpolateString("hello ${name}", { }))
+      .toThrow("Variable name not found in parameters");
+  });
+
+  it("interpolateString with missing environment variable throws error", () => {
+    expect(() => Utils.interpolateString("hello ${env:INVALID_VAR}", { }))
+      .toThrow("Environment Variable INVALID_VAR not found");
   });
 });
