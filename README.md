@@ -321,6 +321,10 @@ We'll also assume that our `clvr.config.json`, located in the root of the projec
 
 Specifying the `parentDir` in our config lets `clvr` know to run the tests upon all child directories of `dirs`, which are `dir1` and `dir2`. We can make each test specific to the directory by providing parameters for those directories in the test, and then adding `${variableStubs}` where we want those parameter values to be.
 
+We can also interpolate strings with environment variables by using the variable pattern `${env:MY_ENV_VAR}`.
+
+We'll assume that the environment variable `MY_GREETING` = `hey`;
+
 ```typescript
 import clvr from "clvr";
 
@@ -355,6 +359,12 @@ clvr({
         "${fileName}": {
           shouldExist: false,
         }
+      }
+    },
+    {
+      command: "echo ${env:MY_GREETING}",
+      stdout: {
+        shouldBeExactly: "hey\n",
       }
     }
   ],
