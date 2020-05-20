@@ -6,6 +6,7 @@ name: Build, Test and Coverage
 jobs:
   all:
     name: Build, Test and Coverage
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
