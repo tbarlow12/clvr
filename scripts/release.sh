@@ -1,4 +1,5 @@
 #!/bin/bash
+git reset --hard
 LAST_COMMIT_MESSAGE=`git log -1 --pretty=%B`
 
 if [[ $LAST_COMMIT_MESSAGE == major* ]];
