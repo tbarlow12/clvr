@@ -31,3 +31,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+    - name: Automated Version Bump
+      uses: phips28/gh-action-bump-version@master
