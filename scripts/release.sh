@@ -1,6 +1,4 @@
 #!/bin/bash
-set -euo pipefail
-
 LAST_COMMIT_MESSAGE=`git log -1 --pretty=%B`
 
 if [[ $LAST_COMMIT_MESSAGE == major* ]];
