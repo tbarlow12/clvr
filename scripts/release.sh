@@ -28,7 +28,7 @@ echo "Set NPM version to: ${NPM_VERSION}"
 SHA=`git rev-parse HEAD`
 
 git remote add authOrigin https://${CLVR_ACCESS_TOKEN}@github.com/tbarlow12/clvr.git
-git push authOrigin ${SOURCE_BRANCH_NAME} --tags
+git push authOrigin ${SOURCE_BRANCH_NAME} --tags -f
 
 echo "Pushed new tag: clvr-${NPM_VERSION} @ SHA: ${SHA:0:8}"
 
