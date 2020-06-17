@@ -1,0 +1,24 @@
+{
+  "name": "Set Service Principal",
+  "validations": [
+    {
+      "command": "sh ../../../scripts/writeFile.sh file.txt '{\"name\":\"Clover\"}'",
+      "files": {
+        "file.txt": {
+          "shouldExist": true,
+          "shouldContain": [
+            "{\"name\":\"Clover\"}"
+          ]
+        }
+      }
+    },
+    {
+      "command": "sh ../../../scripts/deleteFile.sh file.txt",
+      "files": {
+        "file.txt": {
+          "shouldExist": false
+        }
+      }
+    }
+  ]
+}
