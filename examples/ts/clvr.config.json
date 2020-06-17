@@ -1,4 +1,4 @@
 {
-  "testPattern": "**/*echo.clvr.ts",
+  "testPattern": "**/*.clvr.ts",
   "parentDir": "directories"
 }
